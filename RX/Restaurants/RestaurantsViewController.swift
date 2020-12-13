@@ -11,37 +11,75 @@ import RxCocoa
 import SnapKit
 
 class RestaurantsViewController: UIViewController {
-
+    private let cellId = "Cell"
     private let disposeBag = DisposeBag()
     private let viewModel = RestaurantsViewModel()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        navigationController?.navigationBar.prefersLargeTitles = true
         applyViewModel()
+        setupViews()
     }
 
     private func applyViewModel() {
         title = viewModel.title
-        viewModel
-            .fetchRestaurantsViewModel()
+        let observable = viewModel
+            .fetchRestaurantsViewModels()
             .observeOn(MainScheduler.instance)
-            .bind(to: tableView.rx.items(cellIdentifier: "cell")) { index, viewModel, cell in
+            .share(replay: 1, scope: .whileConnected)
+
+        observable
+            .subscribe(onNext: { [weak self] value in
+                if value.isEmpty {
+                    self?.label.text = "Nothing was found"
+                } else {
+                    self?.label.text = ""
+                }
+            }, onError: { [weak self] error in
+                self?.label.text = "An error occured:\n" + error.localizedDescription
+            }).disposed(by: disposeBag)
+
+        observable
+            .catchError { _ in
+                .just([])
+            }
+            .bind(to: tableView.rx.items(cellIdentifier: cellId)) { _, viewModel, cell in
                 cell.textLabel?.text = viewModel.displayRowValue
-            }.disposed(by: disposeBag)
+            }
+            .disposed(by: disposeBag)
     }
 
     // MARK: - Subviews
+
+    private func setupViews() {
+        navigationController?.navigationBar.prefersLargeTitles = true
+        view.addSubview(tableView)
+        view.addSubview(label)
+
+        label.snp.makeConstraints {
+            $0.leading.equalToSuperview().offset(18)
+            $0.centerX.centerY.equalToSuperview()
+        }
+
+        tableView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+    }
+
+    private lazy var label: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 0
+        label.font = .systemFont(ofSize: 30, weight: .bold)
+        return label
+    }()
 
     private lazy var tableView: UITableView = {
         let table = UITableView()
         table.translatesAutoresizingMaskIntoConstraints = false
         table.backgroundColor = .white
-        view.addSubview(table)
-        table.snp.makeConstraints { $0.edges.equalToSuperview() }
         table.tableFooterView = UIView()
-        table.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        table.register(UITableViewCell.self, forCellReuseIdentifier: cellId)
         return table
     }()
 }

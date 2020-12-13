@@ -81,9 +81,9 @@
 		1F6F3F8D2584A7250087C231 /* Restaurants */ = {
 			isa = PBXGroup;
 			children = (
+				1F6F3F802584A6300087C231 /* RestaurantModel.swift */,
 				1F6F3F9C2584ACB90087C231 /* RestaurantViewModel.swift */,
 				1F6F3F982584AC270087C231 /* RestaurantsViewModel.swift */,
-				1F6F3F802584A6300087C231 /* RestaurantModel.swift */,
 				1FA30ACF2583B8D60057C6B6 /* RestaurantsViewController.swift */,
 				1F6F3F902584A7730087C231 /* RestaurantsService.swift */,
 			);

@@ -1,0 +1,21 @@
+{
+    "code": 200,
+    "result": [
+        {
+            "name": "Чентуриппе",
+            "cuisine": "italian"
+        },
+        {
+            "name": "The Park",
+            "cuisine": "mixed"
+        },
+        {
+            "name": "Фантоцци",
+            "cuisine": "italian"
+        },
+        {
+            "name": "Якитория",
+            "cuisine": "japanese"
+        }
+    ]
+}

@@ -13,8 +13,11 @@ class RestaurantsViewModel {
 
     let title = "Restaurants"
 
-    func fetchRestaurantsViewModel() -> Observable<[RestaurantViewModel]> {
-        restaurantsService.fetchRestaurants()
-            .map { $0.map(RestaurantViewModel.init) }
+    func fetchRestaurantsViewModels() -> Observable<[RestaurantViewModel]> {
+        restaurantsService
+            .fetchRestaurants()
+            .map { array in
+                array.map(RestaurantViewModel.init)
+            }
     }
 }

@@ -15,21 +15,23 @@ class RestaurantsService {
         Observable.create { observer -> Disposable in
             self.fileService
                 .fetchJSON(fileName: "Restaurants")
-                .subscribe { data in
+                .flatMap { data -> Observable<Response<[Restaurant]>> in
                     do {
-                        let response = try JSONDecoder()
-                            .decode(Response<[Restaurant]>.self, from: data)
-                        if response.code == 200 {
-                            if let result = response.result {
-                                observer.onNext(result)
-                            } else {
-                                observer.onError(ResponseError.unexpectedEmptyResult)
-                            }
-                        } else {
-                            observer.onError(ResponseError.errorCode(response.code))
-                        }
+                        let response = try JSONDecoder().decode(Response<[Restaurant]>.self, from: data)
+                        return .just(response)
                     } catch {
-                        observer.onError(error)
+                        return Observable.error(error)
+                    }
+                }
+                .subscribe { response in
+                    if response.code == 200 {
+                        if let result = response.result {
+                            observer.onNext(result)
+                        } else {
+                            observer.onError(ResponseError.unexpectedEmptyResult)
+                        }
+                    } else {
+                        observer.onError(ResponseError.errorCode(response.code))
                     }
                 } onError: { error in
                     observer.onError(error)

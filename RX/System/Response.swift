@@ -13,7 +13,16 @@ struct Response<Data: Decodable>: Decodable {
     let result: Data?
 }
 
-enum ResponseError: Error {
+enum ResponseError: Error, LocalizedError {
     case errorCode(Int)
     case unexpectedEmptyResult
+
+    var errorDescription: String? {
+        switch self {
+        case .errorCode(let code):
+            return "Code \(code)"
+        case .unexpectedEmptyResult:
+            return "Response came back with a missing result object"
+        }
+    }
 }

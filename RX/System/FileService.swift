@@ -31,6 +31,13 @@ class FileService {
     }
 }
 
-enum JSONError: Error {
+enum JSONError: Error, LocalizedError {
     case fileNotFound
+
+    var errorDescription: String? {
+        switch self {
+        case .fileNotFound:
+            return "File was not found"
+        }
+    }
 }
