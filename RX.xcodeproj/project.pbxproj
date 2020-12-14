@@ -56,11 +56,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1F10445A2587E03300D5CBAC /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				1F6F3F902584A7730087C231 /* RestaurantsService.swift */,
+				1F6F3F932584A8380087C231 /* FileService.swift */,
+				1F6F3F8A2584A6ED0087C231 /* Response.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
 		1F6F3F7F2584A6170087C231 /* System */ = {
 			isa = PBXGroup;
 			children = (
-				1F6F3F932584A8380087C231 /* FileService.swift */,
-				1F6F3F8A2584A6ED0087C231 /* Response.swift */,
 				1FA30AE8258499660057C6B6 /* AppCoordinator.swift */,
 				1FA30AD42583B8D80057C6B6 /* Assets.xcassets */,
 				1FA30AD62583B8D80057C6B6 /* LaunchScreen.storyboard */,
@@ -85,7 +93,6 @@
 				1F6F3F9C2584ACB90087C231 /* RestaurantViewModel.swift */,
 				1F6F3F982584AC270087C231 /* RestaurantsViewModel.swift */,
 				1FA30ACF2583B8D60057C6B6 /* RestaurantsViewController.swift */,
-				1F6F3F902584A7730087C231 /* RestaurantsService.swift */,
 			);
 			path = Restaurants;
 			sourceTree = "<group>";
@@ -112,6 +119,7 @@
 			isa = PBXGroup;
 			children = (
 				1F6F3F8D2584A7250087C231 /* Restaurants */,
+				1F10445A2587E03300D5CBAC /* Services */,
 				1F6F3F852584A6780087C231 /* Data */,
 				1F6F3F7F2584A6170087C231 /* System */,
 				1FA30AD92583B8D80057C6B6 /* Info.plist */,

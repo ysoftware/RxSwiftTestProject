@@ -8,7 +8,6 @@
 import Foundation
 
 struct Response<Data: Decodable>: Decodable {
-
     let code: Int
     let result: Data?
 }
