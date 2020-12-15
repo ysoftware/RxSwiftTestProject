@@ -17,7 +17,7 @@ class RestaurantsViewController: UIViewController {
     private let disposeBag = DisposeBag()
 
     private var restaurants = BehaviorRelay<[RestaurantViewModel]>(value: [])
-    private var selectedFilter = BehaviorRelay<Cuisine?>(value: nil)
+    private var selectedFilters = BehaviorRelay<Set<Cuisine>>(value: [])
     private var filteredRestaurants = PublishSubject<[RestaurantViewModel]>()
 
     override func viewDidLoad() {
@@ -27,17 +27,19 @@ class RestaurantsViewController: UIViewController {
         setupFilters()
     }
 
+    override func viewWillLayoutSubviews() {
+        tableView.contentInset.bottom = tagsStackView.frame.height
+    }
+
     private func applyViewModel() {
         title = viewModel.title
 
         Observable
-            .combineLatest(restaurants, selectedFilter)
-            .bind(onNext: { [weak self] restaurants, filter in
-                if let filter = filter {
-                    self?.filteredRestaurants.onNext(restaurants.filter { $0.restaurant.cuisine == filter })
-                } else {
-                    self?.filteredRestaurants.onNext(restaurants)
-                }
+            .combineLatest(restaurants, selectedFilters)
+            .bind(onNext: { [weak self] restaurants, filters in
+                self?.filteredRestaurants.onNext(restaurants.filter {
+                    filters.contains($0.restaurant.cuisine) || filters.isEmpty
+                })
             }).disposed(by: disposeBag)
 
         filteredRestaurants
@@ -123,27 +125,23 @@ class RestaurantsViewController: UIViewController {
     }
 
     private func setupFilters() {
-        selectedFilter
+        selectedFilters
             .observeOn(MainScheduler.instance)
-            .subscribe(onNext: { [weak self] filter in
+            .subscribe(onNext: { [weak self] filters in
                 guard let self = self else { return }
 
                 self.tagsStackView.arrangedSubviews
-                    .forEach {
-                        $0.removeFromSuperview()
-                    }
+                    .forEach { $0.removeFromSuperview() }
 
                 Cuisine.allCases
                     .map {
                         self.makeFilterLabel(
                             title: $0.rawValue.capitalized,
                             tag: Cuisine.allCases.firstIndex(of: $0)!,
-                            isSelected: filter == $0
+                            isSelected: filters.contains($0)
                         )
                     }
-                    .forEach {
-                        self.tagsStackView.addArrangedSubview($0)
-                    }
+                    .forEach { self.tagsStackView.addArrangedSubview($0) }
             })
             .disposed(by: disposeBag)
     }
@@ -152,11 +150,13 @@ class RestaurantsViewController: UIViewController {
 
     @objc func didTapFilterView(_ gestureRecognizer: UITapGestureRecognizer) {
         let tag = Cuisine.allCases[gestureRecognizer.view!.tag]
-        if selectedFilter.value == tag {
-            selectedFilter.accept(nil)
+        var newValue = selectedFilters.value
+        if newValue.contains(tag) {
+            newValue.remove(tag)
         } else {
-            selectedFilter.accept(tag)
+            newValue.insert(tag)
         }
+        selectedFilters.accept(newValue)
     }
 
     private func makeFilterLabel(title: String, tag: Int, isSelected: Bool) -> UIView {
