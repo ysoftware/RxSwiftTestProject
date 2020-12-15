@@ -16,7 +16,13 @@ class AppCoordinator {
     }
 
     func start() {
-        window.rootViewController = UINavigationController(rootViewController: RestaurantsViewController())
+        let fileService = FileService()
+        let restaurantService = RestaurantsService(fileService: fileService)
+
+        let restaurantsViewController = RestaurantsViewController()
+        restaurantsViewController.viewModel = RestaurantsViewModel(restaurantsService: restaurantService)
+
+        window.rootViewController = UINavigationController(rootViewController: restaurantsViewController)
         window.makeKeyAndVisible()
     }
 }

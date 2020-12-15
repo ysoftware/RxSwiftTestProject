@@ -7,7 +7,13 @@
 
 import RxSwift
 
-class FileService {
+protocol IFileService {
+    func fetchJSON(fileName: String) -> Observable<Data>
+}
+
+class FileService { }
+
+extension FileService: IFileService {
     func fetchJSON(fileName: String) -> Observable<Data> {
         Observable
             .create { observer -> Disposable in

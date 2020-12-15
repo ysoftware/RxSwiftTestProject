@@ -14,8 +14,32 @@
             "cuisine": "italian"
         },
         {
+            "name": "#FARШ",
+            "cuisine": "american"
+        },
+        {
             "name": "Якитория",
             "cuisine": "japanese"
+        },
+        {
+            "name": "Савой",
+            "cuisine": "italian"
+        },
+        {
+            "name": "K-Town",
+            "cuisine": "korean"
+        },
+        {
+            "name": "Fumisawa Sushi",
+            "cuisine": "japanese"
+        },
+        {
+            "name": "Veганутые",
+            "cuisine": "vegan"
+        },
+        {
+            "name": "Burger Heroes",
+            "cuisine": "american"
         }
     ]
 }

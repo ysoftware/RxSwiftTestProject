@@ -8,9 +8,20 @@
 import Foundation
 import RxSwift
 
-class RestaurantsService {
-    let fileService = FileService()
+protocol IRestaurantsService {
+    func fetchRestaurants() -> Observable<[Restaurant]>
+}
 
+class RestaurantsService {
+    init(fileService: IFileService) {
+        self.fileService = fileService
+    }
+
+    // MARK: Dependencies
+    let fileService: IFileService
+}
+
+extension RestaurantsService: IRestaurantsService {
     func fetchRestaurants() -> Observable<[Restaurant]> {
         Observable.create { observer -> Disposable in
             self.fileService

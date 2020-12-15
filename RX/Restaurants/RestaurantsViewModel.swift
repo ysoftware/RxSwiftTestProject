@@ -9,41 +9,55 @@ import RxSwift
 
 class RestaurantsViewModel {
 
+    // MARK: - Public
+
     let title = "Restaurants"
 
     func fetchRestaurantsViewModels() -> Observable<[RestaurantViewModel]> {
-        runRequest()
+        refresh()
         return subject.asObservable()
     }
 
     func refresh() {
-        loadNewData()
+        disposableRequest?.dispose()
+        runRequest()
+    }
+
+    // MARK: - Initialization
+
+    deinit {
+        disposableRequest?.dispose()
+        subject.dispose()
+    }
+
+    // MARK: Dependencies
+    private let restaurantsService: IRestaurantsService
+
+    init(restaurantsService: IRestaurantsService) {
+        self.restaurantsService = restaurantsService
     }
 
     // MARK: - Private
 
-    deinit {
-        disposableRequest?.dispose()
-    }
-
-    private var disposableRequest: Disposable?
+    // MARK: Observables
     private let subject = PublishSubject<[RestaurantViewModel]>()
-    private let restaurantsService = RestaurantsService()
+    private var disposableRequest: Disposable?
+
+    // MARK: Methods
 
     private func runRequest() {
         disposableRequest = restaurantsService
             .fetchRestaurants()
             .map { $0.map(RestaurantViewModel.init) }
-            .subscribe(onNext: { [weak self] in
+            .subscribe { [weak self] value in
                 guard let self = self else { return }
-                self.subject.onNext($0)
-                self.disposableRequest = nil
+                self.subject.onNext(value)
+            } onError: { [weak self] error in
+                guard let self = self else { return }
+                self.subject.onError(error)
+            } onDisposed: {
                 self.disposableRequest?.dispose()
-            })
-    }
-
-    private func loadNewData() {
-        disposableRequest?.dispose()
-        runRequest()
+                self.disposableRequest = nil
+            }
     }
 }

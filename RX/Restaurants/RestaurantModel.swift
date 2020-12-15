@@ -12,9 +12,11 @@ struct Restaurant: Decodable {
     let cuisine: Cuisine
 }
 
-enum Cuisine: String, Decodable {
+enum Cuisine: String, Decodable, CaseIterable {
     case italian
     case japanese
     case american
     case mixed
+    case vegan
+    case korean
 }
