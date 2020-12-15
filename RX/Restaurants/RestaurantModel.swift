@@ -20,3 +20,12 @@ enum Cuisine: String, Decodable, CaseIterable {
     case vegan
     case korean
 }
+
+// MARK: - View Model
+struct RestaurantViewModel {
+    let restaurant: Restaurant
+
+    init(restaurant: Restaurant) {
+        self.restaurant = restaurant
+    }
+}

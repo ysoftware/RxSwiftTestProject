@@ -43,8 +43,7 @@ class RestaurantsViewModel {
     private let subject = PublishSubject<[RestaurantViewModel]>()
     private var disposableRequest: Disposable?
 
-    // MARK: Methods
-
+    // MARK: Method
     private func runRequest() {
         disposableRequest = restaurantsService
             .fetchRestaurants()

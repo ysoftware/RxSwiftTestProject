@@ -11,11 +11,10 @@ import RxCocoa
 import SnapKit
 
 class RestaurantsViewController: UIViewController {
+
     var viewModel: RestaurantsViewModel!
 
-    private let cellId = "Cell"
     private let disposeBag = DisposeBag()
-
     private var restaurants = BehaviorRelay<[RestaurantViewModel]>(value: [])
     private var selectedFilters = BehaviorRelay<Set<Cuisine>>(value: [])
     private var filteredRestaurants = PublishSubject<[RestaurantViewModel]>()
@@ -50,8 +49,10 @@ class RestaurantsViewController: UIViewController {
                 self?.tableView.refreshControl?.endRefreshing()
                 return value
             }
-            .bind(to: tableView.rx.items(cellIdentifier: cellId)) { _, viewModel, cell in
-                cell.textLabel?.text = "\(viewModel.restaurant.name) - \(viewModel.restaurant.cuisine.rawValue.capitalized)"
+            .bind(to: tableView.rx.items(cellIdentifier: RestaurantCell.ID)) { _, viewModel, cell in
+                guard let cell = cell as? RestaurantCell else { return }
+                cell.nameLabel.text = viewModel.restaurant.name
+                cell.subtitleLabel.text = viewModel.restaurant.cuisine.rawValue.capitalized
             }
             .disposed(by: disposeBag)
 
@@ -165,15 +166,10 @@ class RestaurantsViewController: UIViewController {
         view.tag = tag
         view.layer.cornerRadius = 10
 
-        if isSelected {
-            view.backgroundColor = UIColor(red: 28/255, green: 145/255, blue: 41/255, alpha: 1)
-        } else {
-            view.backgroundColor = UIColor(red: 73/255, green: 88/255, blue: 184/255, alpha: 1)
-        }
-
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .white
+        label.font = .systemFont(ofSize: 15, weight: .semibold)
         label.text = title
 
         view.addSubview(label)
@@ -181,11 +177,15 @@ class RestaurantsViewController: UIViewController {
             $0.leading.top.equalToSuperview().offset(10)
             $0.bottom.trailing.equalToSuperview().offset(-10)
         }
-
         let tap = UITapGestureRecognizer(target: self, action: #selector(didTapFilterView))
         view.addGestureRecognizer(tap)
         view.isUserInteractionEnabled = true
 
+        if isSelected {
+            view.backgroundColor = UIColor(red: 28/255, green: 145/255, blue: 41/255, alpha: 1)
+        } else {
+            view.backgroundColor = UIColor(red: 73/255, green: 88/255, blue: 184/255, alpha: 1)
+        }
         return view
     }
 
@@ -202,7 +202,7 @@ class RestaurantsViewController: UIViewController {
         table.translatesAutoresizingMaskIntoConstraints = false
         table.backgroundColor = .white
         table.tableFooterView = UIView()
-        table.register(UITableViewCell.self, forCellReuseIdentifier: cellId)
+        table.register(RestaurantCell.self, forCellReuseIdentifier: RestaurantCell.ID)
         return table
     }()
 
@@ -221,5 +221,57 @@ class RestaurantsViewController: UIViewController {
         stack.directionalLayoutMargins = .init(top: 0, leading: 15, bottom: 0, trailing: 15)
         stack.isLayoutMarginsRelativeArrangement = true
         return stack
+    }()
+}
+
+class RestaurantCell: UITableViewCell {
+
+    static let ID = "Cell"
+
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setup()
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setup()
+    }
+
+    private func setup() {
+        addSubview(nameLabel)
+        addSubview(subtitleLabel)
+
+        nameLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(10)
+            $0.leading.equalToSuperview().offset(18)
+            $0.trailing.equalToSuperview().offset(18)
+        }
+
+        subtitleLabel.snp.makeConstraints {
+            $0.top.equalTo(nameLabel.snp.bottom).offset(2)
+            $0.leading.equalToSuperview().offset(18)
+            $0.bottom.equalToSuperview().offset(-10)
+            $0.trailing.equalToSuperview().offset(18)
+        }
+    }
+
+    // MARK: Subviews
+    lazy var nameLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 0
+        label.textColor = .black
+        label.font = .systemFont(ofSize: 20, weight: .bold)
+        return label
+    }()
+
+    lazy var subtitleLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 0
+        label.textColor = .darkGray
+        label.font = .systemFont(ofSize: 15, weight: .semibold)
+        return label
     }()
 }
