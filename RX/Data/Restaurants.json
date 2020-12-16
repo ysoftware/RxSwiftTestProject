@@ -10,7 +10,15 @@
             "cuisine": "mixed"
         },
         {
+            "name": "Pinsapositana",
+            "cuisine": "italian"
+        },
+        {
             "name": "Фантоцци",
+            "cuisine": "italian"
+        },
+        {
+            "name": "Сыроварня",
             "cuisine": "italian"
         },
         {

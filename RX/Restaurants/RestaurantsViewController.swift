@@ -33,6 +33,8 @@ class RestaurantsViewController: UIViewController {
     private func applyViewModel() {
         title = viewModel.title
 
+        // @Todo: move to viewModel
+
         Observable
             .combineLatest(restaurants, selectedFilters)
             .bind(onNext: { [weak self] restaurants, filters in
@@ -244,15 +246,15 @@ class RestaurantCell: UITableViewCell {
 
         nameLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(10)
-            $0.leading.equalToSuperview().offset(18)
-            $0.trailing.equalToSuperview().offset(18)
+            $0.leading.equalTo(snp.leadingMargin)
+            $0.trailing.equalTo(snp.trailingMargin)
         }
 
         subtitleLabel.snp.makeConstraints {
             $0.top.equalTo(nameLabel.snp.bottom).offset(2)
-            $0.leading.equalToSuperview().offset(18)
             $0.bottom.equalToSuperview().offset(-10)
-            $0.trailing.equalToSuperview().offset(18)
+            $0.leading.equalTo(snp.leadingMargin)
+            $0.trailing.equalTo(snp.trailingMargin)
         }
     }
 

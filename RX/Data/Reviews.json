@@ -1,0 +1,42 @@
+[
+    {
+        "name": "Angela",
+        "review": "Amazing place! Would love to come back when I visit the city again.",
+        "rating": 5
+    },
+    {
+        "name": "Mark",
+        "review": "The fish was cold.",
+        "rating": 2
+    },
+    {
+        "name": "Antonio",
+        "review": "Actually enjoyed the salad. Great setting.",
+        "rating": 4
+    },
+    {
+        "name": "Elisabeth",
+        "review": "The fish was delicious, although a little bit cold.",
+        "rating": 4
+    },
+    {
+        "name": "Milton",
+        "review": "You know, I'm really grateful, that you don't drown the food in sauce, but served it separately.",
+        "rating": 5
+    },
+    {
+        "name": "Rewboss",
+        "review": "The fish was on point, but the drinks came back half empty. I don't mean to be a pessimist, but is this what I'm paying for?",
+        "rating": 3
+    },
+    {
+        "name": "Anna",
+        "review": "Great place! Just sitting here enjoying a cut of coffee is enough to make my day much better.",
+        "rating": 5
+    },
+    {
+        "name": "Murphy",
+        "review": "They have free wifi.",
+        "rating": 5
+    }
+]

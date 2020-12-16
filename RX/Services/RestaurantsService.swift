@@ -26,31 +26,9 @@ extension RestaurantsService: IRestaurantsService {
         Observable.create { observer -> Disposable in
             self.fileService
                 .fetchJSON(fileName: "Restaurants")
-                .flatMap { data -> Observable<Response<[Restaurant]>> in
-                    do {
-                        let response = try JSONDecoder().decode(Response<[Restaurant]>.self, from: data)
-                        return .just(response)
-                    } catch {
-                        return Observable.error(error)
-                    }
-                }
-//                .map { response -> Response<[Restaurant]> in
-//                    let result = response.result?.filter { _ in Int.random(in: 0...10) > 1 }
-//                    return Response(code: response.code, result: result)
-//                }
-                .subscribe { response in
-                    if response.code == 200 {
-                        if let result = response.result {
-                            observer.onNext(result)
-                        } else {
-                            observer.onError(ResponseError.unexpectedEmptyResult)
-                        }
-                    } else {
-                        observer.onError(ResponseError.errorCode(response.code))
-                    }
-                } onError: { error in
-                    observer.onError(error)
-                }
+                .parseJSONIntoResponse()
+                .skipRandomElements()
+                .handleResponse(with: observer)
         }
     }
 }
