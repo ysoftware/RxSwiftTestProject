@@ -23,12 +23,10 @@ class RestaurantsService {
 
 extension RestaurantsService: IRestaurantsService {
     func fetchRestaurants() -> Observable<[Restaurant]> {
-        Observable.create { observer -> Disposable in
-            self.fileService
-                .fetchJSON(fileName: "Restaurants")
-                .parseJSONIntoResponse()
-                .skipRandomElements()
-                .handleResponse(with: observer)
-        }
+        fileService
+            .fetchJSON(fileName: "Restaurants")
+            .parseJSONIntoResponse()
+            .skipRandomElements()
+            .handleResponse()
     }
 }

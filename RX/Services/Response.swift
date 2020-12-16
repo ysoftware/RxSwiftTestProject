@@ -22,21 +22,19 @@ extension Observable {
         }
     }
 
-    func handleResponse<T: Decodable>(with observer: AnyObserver<T>) -> Disposable
-    where Element == Response<T>
+    func handleResponse<T: Decodable>() -> Observable<[T]>
+    where Element == Response<[T]>
     {
-        subscribe { response in
+        map { response in
             if response.code == 200 {
                 if let result = response.result {
-                    observer.onNext(result)
+                    return result
                 } else {
-                    observer.onError(ResponseError.unexpectedEmptyResult)
+                    throw ResponseError.unexpectedEmptyResult
                 }
             } else {
-                observer.onError(ResponseError.errorCode(response.code))
+                throw ResponseError.errorCode(response.code)
             }
-        } onError: { error in
-            observer.onError(error)
         }
     }
 

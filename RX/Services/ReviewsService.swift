@@ -24,11 +24,9 @@ class ReviewsService {
 extension ReviewsService: IReviewsService {
 
     func fetchReviews(for restaurant: Restaurant) -> Observable<[Review]> {
-        Observable.create { observer -> Disposable in
-            self.fileService
-                .fetchJSON(fileName: "Reviews")
-                .parseJSONIntoResponse()
-                .handleResponse(with: observer)
-        }
+        fileService
+            .fetchJSON(fileName: "Reviews")
+            .parseJSONIntoResponse()
+            .handleResponse()
     }
 }
