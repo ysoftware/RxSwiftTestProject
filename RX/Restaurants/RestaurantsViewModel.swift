@@ -10,27 +10,88 @@ import RxCocoa
 
 class RestaurantsViewModel {
 
-    // MARK: - Public
+    // MARK: - Output
+    let title: Observable<String> = BehaviorRelay(value: "Restaurants").asObservable()
 
-    var itemSelected = PublishSubject<Int>()
-
-    let title = "Restaurants"
-
-    func fetchRestaurantsViewModels() -> Observable<[RestaurantViewModel]> {
-        refresh()
-        return subject.asObservable()
+    private var messageLabelRelay = BehaviorRelay(value: "")
+    var messageLabel: Observable<String> {
+        messageLabelRelay.asObservable()
+    }
+    
+    private let allRestaurantsRelay = BehaviorRelay<[RestaurantViewModel]>(value: [])
+    private var filteredRestaurantsRelay = BehaviorRelay<[RestaurantViewModel]>(value: [])
+    var restaurants: Observable<[RestaurantViewModel]> {
+        filteredRestaurantsRelay.asObservable()
     }
 
-    func refresh() {
-        disposableRequest?.dispose()
+    var selectedFilters: Set<Cuisine> {
+        selectedFiltersObserver.value
+    }
+
+    // MARK: - Input
+    var itemSelectedObserver = PublishSubject<Int>()
+    var selectedFiltersObserver = BehaviorRelay<Set<Cuisine>>(value: [])
+    var refreshObserver = PublishSubject<Void>()
+
+    func initiate() {
         runRequest()
+
+        requestRelay
+            .bind(to: allRestaurantsRelay)
+            .disposed(by: disposeBag)
+
+        requestRelay
+            .map { value in
+                if value.isEmpty {
+                    return "Nothing was found"
+                } else {
+                    return ""
+                }
+            }
+            .catchError { error in
+                .just("An error occured:\n \(error.localizedDescription)")
+            }
+            .bind(to: messageLabelRelay)
+            .disposed(by: disposeBag)
+
+        Observable
+            .combineLatest(allRestaurantsRelay, selectedFiltersObserver)
+            .map { restaurants, selectedFilters in
+                restaurants.filter {
+                    selectedFilters.contains($0.restaurant.cuisine) || selectedFilters.isEmpty
+                }
+            }
+            .bind(to: filteredRestaurantsRelay)
+            .disposed(by: disposeBag)
+
+        refreshObserver
+            .subscribe(onNext: { [weak self] in
+                self?.runRequest()
+            })
+            .disposed(by: disposeBag)
+    }
+
+    // MARK: - Private
+
+    private let disposeBag = DisposeBag()
+    private var requestHandle: Disposable?
+    private var requestRelay = PublishRelay<[RestaurantViewModel]>()
+
+    private func runRequest() {
+        requestHandle?.dispose()
+
+        requestHandle = restaurantsService
+            .fetchRestaurants()
+            .map { $0.map(RestaurantViewModel.init) }
+            .observeOn(MainScheduler.instance)
+            .share(replay: 1)
+            .bind(to: requestRelay)
     }
 
     // MARK: - Initialization
 
     deinit {
-        disposableRequest?.dispose()
-        subject.dispose()
+        requestHandle?.dispose()
     }
 
     // MARK: Dependencies
@@ -38,28 +99,5 @@ class RestaurantsViewModel {
 
     init(restaurantsService: IRestaurantsService) {
         self.restaurantsService = restaurantsService
-    }
-
-    // MARK: - Private
-
-    // MARK: Observables
-    private let subject = PublishSubject<[RestaurantViewModel]>()
-    private var disposableRequest: Disposable?
-
-    // MARK: Method
-    private func runRequest() {
-        disposableRequest = restaurantsService
-            .fetchRestaurants()
-            .map { $0.map(RestaurantViewModel.init) }
-            .subscribe { [weak self] value in
-                guard let self = self else { return }
-                self.subject.onNext(value)
-            } onError: { [weak self] error in
-                guard let self = self else { return }
-                self.subject.onError(error)
-            } onDisposed: {
-                self.disposableRequest?.dispose()
-                self.disposableRequest = nil
-            }
     }
 }

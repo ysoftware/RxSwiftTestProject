@@ -15,15 +15,12 @@ class RestaurantsViewController: UIViewController {
     var viewModel: RestaurantsViewModel!
 
     private let disposeBag = DisposeBag()
-    private var restaurants = BehaviorRelay<[RestaurantViewModel]>(value: [])
-    private var selectedFilters = BehaviorRelay<Set<Cuisine>>(value: [])
-    private var filteredRestaurants = BehaviorSubject<[RestaurantViewModel]>(value: [])
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        applyViewModel()
         setupViews()
         setupFilters()
+        applyViewModel()
     }
 
     override func viewWillLayoutSubviews() {
@@ -31,18 +28,21 @@ class RestaurantsViewController: UIViewController {
     }
 
     private func applyViewModel() {
-        title = viewModel.title
-
-        Observable
-            .combineLatest(restaurants, selectedFilters)
-            .bind(onNext: { [weak self] restaurants, filters in
-                self?.filteredRestaurants.onNext(restaurants.filter {
-                    filters.contains($0.restaurant.cuisine) || filters.isEmpty
-                })
-            })
+        viewModel.title
+            .bind(to: rx.title)
             .disposed(by: disposeBag)
 
-        filteredRestaurants
+        tableView.rx.itemSelected
+            .map { $0.row }
+            .subscribe(viewModel.itemSelectedObserver)
+            .disposed(by: disposeBag)
+
+        tableView.refreshControl?.rx
+            .controlEvent(.valueChanged)
+            .subscribe(viewModel.refreshObserver)
+            .disposed(by: disposeBag)
+
+        viewModel.restaurants
             .catchError { _ in
                 .just([])
             }
@@ -57,39 +57,14 @@ class RestaurantsViewController: UIViewController {
             }
             .disposed(by: disposeBag)
 
-        // MARK: Restaurants
-
-        let observable = viewModel
-            .fetchRestaurantsViewModels()
-            .observeOn(MainScheduler.instance)
-            .share(replay: 1)
-
-        observable
-            .bind(to: restaurants)
-            .disposed(by: disposeBag)
-
-        observable
-            .subscribe(onNext: { [weak self] value in
-                if value.isEmpty {
-                    self?.label.text = "Nothing was found"
-                } else {
-                    self?.label.text = ""
-                }
-            }, onError: { [weak self] error in
-                self?.label.text = "An error occured:\n" + error.localizedDescription
-            })
-            .disposed(by: disposeBag)
+        viewModel.initiate()
     }
 
     // MARK: - Setup
 
     private func setupViews() {
         navigationController?.navigationBar.prefersLargeTitles = true
-
         tableView.refreshControl = UIRefreshControl()
-        tableView.refreshControl?.addAction(UIAction(handler: { _ in
-            self.viewModel.refresh()
-        }), for: .valueChanged)
 
         view.addSubview(tableView)
         view.addSubview(label)
@@ -127,7 +102,7 @@ class RestaurantsViewController: UIViewController {
     }
 
     private func setupFilters() {
-        selectedFilters
+        viewModel.selectedFiltersObserver
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [weak self] filters in
                 guard let self = self else { return }
@@ -152,13 +127,13 @@ class RestaurantsViewController: UIViewController {
 
     @objc func didTapFilterView(_ gestureRecognizer: UITapGestureRecognizer) {
         let tag = Cuisine.allCases[gestureRecognizer.view!.tag]
-        var newValue = selectedFilters.value
+        var newValue = viewModel.selectedFilters
         if newValue.contains(tag) {
             newValue.remove(tag)
         } else {
             newValue.insert(tag)
         }
-        selectedFilters.accept(newValue)
+        viewModel.selectedFiltersObserver.accept(newValue)
     }
 
     private func makeFilterLabel(title: String, tag: Int, isSelected: Bool) -> UIView {
