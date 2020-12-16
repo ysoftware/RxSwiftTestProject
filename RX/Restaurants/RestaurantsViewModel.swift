@@ -6,10 +6,13 @@
 //
 
 import RxSwift
+import RxCocoa
 
 class RestaurantsViewModel {
 
     // MARK: - Public
+
+    var itemSelected = PublishSubject<Int>()
 
     let title = "Restaurants"
 

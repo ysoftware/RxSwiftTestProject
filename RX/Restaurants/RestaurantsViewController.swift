@@ -17,7 +17,7 @@ class RestaurantsViewController: UIViewController {
     private let disposeBag = DisposeBag()
     private var restaurants = BehaviorRelay<[RestaurantViewModel]>(value: [])
     private var selectedFilters = BehaviorRelay<Set<Cuisine>>(value: [])
-    private var filteredRestaurants = PublishSubject<[RestaurantViewModel]>()
+    private var filteredRestaurants = BehaviorSubject<[RestaurantViewModel]>(value: [])
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,15 +33,14 @@ class RestaurantsViewController: UIViewController {
     private func applyViewModel() {
         title = viewModel.title
 
-        // @Todo: move to viewModel
-
         Observable
             .combineLatest(restaurants, selectedFilters)
             .bind(onNext: { [weak self] restaurants, filters in
                 self?.filteredRestaurants.onNext(restaurants.filter {
                     filters.contains($0.restaurant.cuisine) || filters.isEmpty
                 })
-            }).disposed(by: disposeBag)
+            })
+            .disposed(by: disposeBag)
 
         filteredRestaurants
             .catchError { _ in

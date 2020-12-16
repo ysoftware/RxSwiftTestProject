@@ -16,7 +16,7 @@ class FileService { }
 extension FileService: IFileService {
     func fetchJSON(fileName: String) -> Observable<Data> {
         Observable.create { observer -> Disposable in
-            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(Int.random(in: 100...1000))) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(Int.random(in: 100...2000))) {
                 guard let path = Bundle.main.path(forResource: fileName, ofType: "json")
                 else {
                     observer.onError(JSONError.fileNotFound)

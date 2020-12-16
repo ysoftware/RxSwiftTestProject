@@ -12,3 +12,12 @@ struct Review: Decodable {
     let review: String
     let rating: Int
 }
+
+// MARK: - View Model
+struct ReviewViewModel {
+    let review: Review
+
+    init(review: Review) {
+        self.review = review
+    }
+}

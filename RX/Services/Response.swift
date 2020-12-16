@@ -7,46 +7,45 @@
 
 import RxSwift
 
+// MARK: - Observable Response Handling
 extension Observable {
 
-    func parseJSONIntoResponse<T: Decodable>() -> Observable<Response<[T]>>
+    func parseJSONIntoResponse<T: Decodable>() -> Observable<Response<T>>
     where Element == Data
     {
-        flatMap { data -> Observable<Response<[T]>> in
-            do {
-                let response = try JSONDecoder().decode(Response<[T]>.self, from: data)
-                return .just(response)
-            } catch {
-                return Observable<Response<[T]>>.error(error)
-            }
+        map { data -> Response<T> in
+            try JSONDecoder().decode(Response<T>.self, from: data)
         }
     }
 
-    func handleResponse<T: Decodable>() -> Observable<[T]>
-    where Element == Response<[T]>
+    func handleResponse<T: Decodable>() -> Observable<T>
+    where Element == Response<T>
     {
         map { response in
-            if response.code == 200 {
-                if let result = response.result {
-                    return result
-                } else {
-                    throw ResponseError.unexpectedEmptyResult
-                }
-            } else {
-                throw ResponseError.errorCode(response.code)
-            }
+            guard response.code == 200
+            else { throw ResponseError.errorCode(response.code) }
+
+            guard let result = response.result
+            else { throw ResponseError.unexpectedEmptyResult }
+            return result
         }
     }
 
     func skipRandomElements<T: Decodable>() -> Observable<Response<[T]>>
-    where Element == Response<Array<T>>
+    where Element == Response<[T]>
     {
         map { response -> Response<[T]> in
-            let result = response.result?.filter { _ in Int.random(in: 0...10) > 1 }
-            return Response(code: response.code, result: result)
+            Response(
+                code: response.code,
+                result: response.result?.filter { _ in
+                    Int.random(in: 0...10) > 1
+                }
+            )
         }
     }
 }
+
+// MARK: - Response Model
 
 struct Response<Data: Decodable>: Decodable {
     let code: Int
