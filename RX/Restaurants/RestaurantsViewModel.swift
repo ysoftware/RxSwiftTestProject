@@ -12,6 +12,7 @@ class RestaurantsViewModel {
 
     // MARK: - Output
     let title: Observable<String> = BehaviorRelay(value: "Restaurants").asObservable()
+    let tags = Cuisine.allCases
 
     private var messageLabelRelay = BehaviorRelay(value: "")
     var messageLabel: Observable<String> {
@@ -24,14 +25,11 @@ class RestaurantsViewModel {
         filteredRestaurantsRelay.asObservable()
     }
 
-    var selectedFilters: Set<Cuisine> {
-        selectedFiltersObserver.value
-    }
-
     // MARK: - Input
     var itemSelectedObserver = PublishSubject<Int>()
     var selectedFiltersObserver = BehaviorRelay<Set<Cuisine>>(value: [])
     var refreshObserver = PublishSubject<Void>()
+    var filterTapObserver = PublishSubject<UITapGestureRecognizer>()
 
     func initiate() {
         runRequest()
@@ -67,6 +65,20 @@ class RestaurantsViewModel {
         refreshObserver
             .subscribe(onNext: { [weak self] in
                 self?.runRequest()
+            })
+            .disposed(by: disposeBag)
+
+        filterTapObserver
+            .subscribe(onNext: { [weak self] gestureRecognizer in
+                guard let self = self else { return }
+                let tag = self.tags[gestureRecognizer.view!.tag]
+                var newValue = self.selectedFiltersObserver.value
+                if newValue.contains(tag) {
+                    newValue.remove(tag)
+                } else {
+                    newValue.insert(tag)
+                }
+                self.selectedFiltersObserver.accept(newValue)
             })
             .disposed(by: disposeBag)
     }

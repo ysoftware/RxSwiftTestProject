@@ -15,11 +15,11 @@ class RestaurantsViewController: UIViewController {
     var viewModel: RestaurantsViewModel!
 
     private let disposeBag = DisposeBag()
+    private var tagsDisposeBag = DisposeBag()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
-        setupFilters()
         applyViewModel()
     }
 
@@ -28,18 +28,11 @@ class RestaurantsViewController: UIViewController {
     }
 
     private func applyViewModel() {
+
+        // MARK: Input
+
         viewModel.title
             .bind(to: rx.title)
-            .disposed(by: disposeBag)
-
-        tableView.rx.itemSelected
-            .map { $0.row }
-            .subscribe(viewModel.itemSelectedObserver)
-            .disposed(by: disposeBag)
-
-        tableView.refreshControl?.rx
-            .controlEvent(.valueChanged)
-            .subscribe(viewModel.refreshObserver)
             .disposed(by: disposeBag)
 
         viewModel.restaurants
@@ -55,6 +48,37 @@ class RestaurantsViewController: UIViewController {
                 cell.nameLabel.text = viewModel.restaurant.name
                 cell.subtitleLabel.text = viewModel.restaurant.cuisine.rawValue.capitalized
             }
+            .disposed(by: disposeBag)
+
+        viewModel.selectedFiltersObserver
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] filters in
+                guard let self = self else { return }
+                self.tagsDisposeBag = DisposeBag()
+                self.tagsStackView.arrangedSubviews
+                    .forEach { $0.removeFromSuperview() }
+                self.viewModel.tags
+                    .map {
+                        self.makeFilterLabel(
+                            title: $0.rawValue.capitalized,
+                            tag: Cuisine.allCases.firstIndex(of: $0)!,
+                            isSelected: filters.contains($0)
+                        )
+                    }
+                    .forEach { self.tagsStackView.addArrangedSubview($0) }
+            })
+            .disposed(by: disposeBag)
+
+        // MARK: Output
+
+        tableView.rx.itemSelected
+            .map { $0.row }
+            .subscribe(viewModel.itemSelectedObserver)
+            .disposed(by: disposeBag)
+
+        tableView.refreshControl?.rx
+            .controlEvent(.valueChanged)
+            .subscribe(viewModel.refreshObserver)
             .disposed(by: disposeBag)
 
         viewModel.initiate()
@@ -101,40 +125,7 @@ class RestaurantsViewController: UIViewController {
         }
     }
 
-    private func setupFilters() {
-        viewModel.selectedFiltersObserver
-            .observeOn(MainScheduler.instance)
-            .subscribe(onNext: { [weak self] filters in
-                guard let self = self else { return }
-
-                self.tagsStackView.arrangedSubviews
-                    .forEach { $0.removeFromSuperview() }
-
-                Cuisine.allCases
-                    .map {
-                        self.makeFilterLabel(
-                            title: $0.rawValue.capitalized,
-                            tag: Cuisine.allCases.firstIndex(of: $0)!,
-                            isSelected: filters.contains($0)
-                        )
-                    }
-                    .forEach { self.tagsStackView.addArrangedSubview($0) }
-            })
-            .disposed(by: disposeBag)
-    }
-
     // MARK: - Subviews
-
-    @objc func didTapFilterView(_ gestureRecognizer: UITapGestureRecognizer) {
-        let tag = Cuisine.allCases[gestureRecognizer.view!.tag]
-        var newValue = viewModel.selectedFilters
-        if newValue.contains(tag) {
-            newValue.remove(tag)
-        } else {
-            newValue.insert(tag)
-        }
-        viewModel.selectedFiltersObserver.accept(newValue)
-    }
 
     private func makeFilterLabel(title: String, tag: Int, isSelected: Bool) -> UIView {
         let view = UIView()
@@ -153,9 +144,14 @@ class RestaurantsViewController: UIViewController {
             $0.leading.top.equalToSuperview().offset(10)
             $0.bottom.trailing.equalToSuperview().offset(-10)
         }
-        let tap = UITapGestureRecognizer(target: self, action: #selector(didTapFilterView))
+
+        let tap = UITapGestureRecognizer()
         view.addGestureRecognizer(tap)
         view.isUserInteractionEnabled = true
+
+        tap.rx.event
+            .bind(to: viewModel.filterTapObserver)
+            .disposed(by: tagsDisposeBag)
 
         if isSelected {
             view.backgroundColor = UIColor(red: 28/255, green: 145/255, blue: 41/255, alpha: 1)
