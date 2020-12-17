@@ -46,9 +46,7 @@ class RestaurantsViewModel {
         // MARK: Output
 
         requestRelay
-            .catchError { _ in
-                .just([])
-            }
+            .catchErrorJustReturn([])
             .bind(to: allRestaurantsRelay)
             .disposed(by: disposeBag)
 
@@ -70,9 +68,7 @@ class RestaurantsViewModel {
 
         Observable
             .combineLatest(
-                allRestaurantsRelay.catchError { _ in
-                    .just([])
-                },
+                allRestaurantsRelay.catchErrorJustReturn([]),
                 selectedFiltersObserver
             )
             .map { restaurants, selectedFilters in
