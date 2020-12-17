@@ -12,17 +12,26 @@ class RestaurantsViewModel {
 
     // MARK: - Output
     let title: Observable<String> = BehaviorRelay(value: "Restaurants").asObservable()
-    let tags = Cuisine.allCases
 
-    private var messageLabelRelay = BehaviorRelay(value: "")
+    private let tagsRelay = BehaviorRelay(value: Cuisine.allCases)
+    var tags: [Cuisine] {
+        tagsRelay.value
+    }
+
+    private let messageLabelRelay = BehaviorRelay(value: "")
     var messageLabel: Observable<String> {
         messageLabelRelay.asObservable()
     }
     
     private let allRestaurantsRelay = BehaviorRelay<[RestaurantViewModel]>(value: [])
-    private var filteredRestaurantsRelay = BehaviorRelay<[RestaurantViewModel]>(value: [])
+    private let filteredRestaurantsRelay = BehaviorRelay<[RestaurantViewModel]>(value: [])
     var restaurants: Observable<[RestaurantViewModel]> {
         filteredRestaurantsRelay.asObservable()
+    }
+
+    private let refreshRelay = BehaviorRelay<Bool>(value: false)
+    var isRefreshing: Observable<Bool> {
+        refreshRelay.asObservable()
     }
 
     // MARK: - Input
@@ -33,6 +42,8 @@ class RestaurantsViewModel {
 
     func initiate() {
         runRequest()
+
+        // MARK: Output
 
         requestRelay
             .bind(to: allRestaurantsRelay)
@@ -52,8 +63,15 @@ class RestaurantsViewModel {
             .bind(to: messageLabelRelay)
             .disposed(by: disposeBag)
 
+        // MARK: Input
+
         Observable
-            .combineLatest(allRestaurantsRelay, selectedFiltersObserver)
+            .combineLatest(
+                allRestaurantsRelay.catchError { _ in
+                    .just([])
+                },
+                selectedFiltersObserver
+            )
             .map { restaurants, selectedFilters in
                 restaurants.filter {
                     selectedFilters.contains($0.restaurant.cuisine) || selectedFilters.isEmpty
@@ -64,14 +82,15 @@ class RestaurantsViewModel {
 
         refreshObserver
             .subscribe(onNext: { [weak self] in
-                self?.runRequest()
+                guard let self = self else { return }
+                self.runRequest()
             })
             .disposed(by: disposeBag)
 
         filterTapObserver
             .subscribe(onNext: { [weak self] gestureRecognizer in
                 guard let self = self else { return }
-                let tag = self.tags[gestureRecognizer.view!.tag]
+                let tag = self.tagsRelay.value[gestureRecognizer.view!.tag]
                 var newValue = self.selectedFiltersObserver.value
                 if newValue.contains(tag) {
                     newValue.remove(tag)
@@ -96,7 +115,11 @@ class RestaurantsViewModel {
             .fetchRestaurants()
             .map { $0.map(RestaurantViewModel.init) }
             .observeOn(MainScheduler.instance)
-            .share(replay: 1)
+            .share(replay: 2)
+            .map { value in
+                self.refreshRelay.accept(false)
+                return value
+            }
             .bind(to: requestRelay)
     }
 

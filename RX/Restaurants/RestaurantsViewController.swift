@@ -35,14 +35,11 @@ class RestaurantsViewController: UIViewController {
             .bind(to: rx.title)
             .disposed(by: disposeBag)
 
+        viewModel.isRefreshing
+            .bind(to: tableView.refreshControl!.rx.isRefreshing)
+            .disposed(by: disposeBag)
+
         viewModel.restaurants
-            .catchError { _ in
-                .just([])
-            }
-            .map { [weak self] value -> [RestaurantViewModel] in
-                self?.tableView.refreshControl?.endRefreshing()
-                return value
-            }
             .bind(to: tableView.rx.items(cellIdentifier: RestaurantCell.ID)) { _, viewModel, cell in
                 guard let cell = cell as? RestaurantCell else { return }
                 cell.nameLabel.text = viewModel.restaurant.name
@@ -193,57 +190,5 @@ class RestaurantsViewController: UIViewController {
         stack.directionalLayoutMargins = .init(top: 0, leading: 15, bottom: 0, trailing: 15)
         stack.isLayoutMarginsRelativeArrangement = true
         return stack
-    }()
-}
-
-class RestaurantCell: UITableViewCell {
-
-    static let ID = "Cell"
-
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setup()
-    }
-
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        setup()
-    }
-
-    private func setup() {
-        addSubview(nameLabel)
-        addSubview(subtitleLabel)
-
-        nameLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(10)
-            $0.leading.equalTo(snp.leadingMargin)
-            $0.trailing.equalTo(snp.trailingMargin)
-        }
-
-        subtitleLabel.snp.makeConstraints {
-            $0.top.equalTo(nameLabel.snp.bottom).offset(2)
-            $0.bottom.equalToSuperview().offset(-10)
-            $0.leading.equalTo(snp.leadingMargin)
-            $0.trailing.equalTo(snp.trailingMargin)
-        }
-    }
-
-    // MARK: Subviews
-    lazy var nameLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.numberOfLines = 0
-        label.textColor = .black
-        label.font = .systemFont(ofSize: 20, weight: .bold)
-        return label
-    }()
-
-    lazy var subtitleLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.numberOfLines = 0
-        label.textColor = .darkGray
-        label.font = .systemFont(ofSize: 15, weight: .semibold)
-        return label
     }()
 }
