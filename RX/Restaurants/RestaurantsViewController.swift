@@ -47,9 +47,13 @@ class RestaurantsViewController: UIViewController {
             }
             .disposed(by: disposeBag)
 
+        viewModel.messageLabel
+            .bind(to: label.rx.text)
+            .disposed(by: disposeBag)
+
         viewModel.selectedFiltersObserver
             .observeOn(MainScheduler.instance)
-            .subscribe(onNext: { [weak self] filters in
+            .bind { [weak self] filters in
                 guard let self = self else { return }
                 self.tagsDisposeBag = DisposeBag()
                 self.tagsStackView.arrangedSubviews
@@ -63,19 +67,19 @@ class RestaurantsViewController: UIViewController {
                         )
                     }
                     .forEach { self.tagsStackView.addArrangedSubview($0) }
-            })
+            }
             .disposed(by: disposeBag)
 
         // MARK: Output
 
         tableView.rx.itemSelected
             .map { $0.row }
-            .subscribe(viewModel.itemSelectedObserver)
+            .bind(to: viewModel.itemSelectedObserver)
             .disposed(by: disposeBag)
 
         tableView.refreshControl?.rx
             .controlEvent(.valueChanged)
-            .subscribe(viewModel.refreshObserver)
+            .bind(to: viewModel.refreshObserver)
             .disposed(by: disposeBag)
 
         viewModel.initiate()

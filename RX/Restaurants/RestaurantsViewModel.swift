@@ -35,10 +35,10 @@ class RestaurantsViewModel {
     }
 
     // MARK: - Input
-    var itemSelectedObserver = PublishSubject<Int>()
+    var itemSelectedObserver = PublishRelay<Int>()
     var selectedFiltersObserver = BehaviorRelay<Set<Cuisine>>(value: [])
-    var refreshObserver = PublishSubject<Void>()
-    var filterTapObserver = PublishSubject<UITapGestureRecognizer>()
+    var refreshObserver = PublishRelay<Void>()
+    var filterTapObserver = PublishRelay<UITapGestureRecognizer>()
 
     func initiate() {
         runRequest()
@@ -46,6 +46,9 @@ class RestaurantsViewModel {
         // MARK: Output
 
         requestRelay
+            .catchError { _ in
+                .just([])
+            }
             .bind(to: allRestaurantsRelay)
             .disposed(by: disposeBag)
 
@@ -58,7 +61,7 @@ class RestaurantsViewModel {
                 }
             }
             .catchError { error in
-                .just("An error occured:\n \(error.localizedDescription)")
+                .just("An error occured:\n\(error.localizedDescription)")
             }
             .bind(to: messageLabelRelay)
             .disposed(by: disposeBag)
@@ -81,14 +84,14 @@ class RestaurantsViewModel {
             .disposed(by: disposeBag)
 
         refreshObserver
-            .subscribe(onNext: { [weak self] in
+            .bind { [weak self] in
                 guard let self = self else { return }
                 self.runRequest()
-            })
+            }
             .disposed(by: disposeBag)
 
         filterTapObserver
-            .subscribe(onNext: { [weak self] gestureRecognizer in
+            .bind { [weak self] gestureRecognizer in
                 guard let self = self else { return }
                 let tag = self.tagsRelay.value[gestureRecognizer.view!.tag]
                 var newValue = self.selectedFiltersObserver.value
@@ -98,7 +101,7 @@ class RestaurantsViewModel {
                     newValue.insert(tag)
                 }
                 self.selectedFiltersObserver.accept(newValue)
-            })
+            }
             .disposed(by: disposeBag)
     }
 
@@ -106,7 +109,7 @@ class RestaurantsViewModel {
 
     private let disposeBag = DisposeBag()
     private var requestHandle: Disposable?
-    private var requestRelay = PublishRelay<[RestaurantViewModel]>()
+    private var requestRelay = PublishSubject<[RestaurantViewModel]>()
 
     private func runRequest() {
         requestHandle?.dispose()
