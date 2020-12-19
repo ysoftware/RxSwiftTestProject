@@ -26,7 +26,7 @@ extension ReviewsService: IReviewsService {
         fileService
             .fetchJSON(fileName: "Reviews")
             .parseJSONIntoResponse()
-            .randomlySwitchCodeToError()
+            .randomlySwitchCodeToError(true)
             .handleResponse()
     }
 }

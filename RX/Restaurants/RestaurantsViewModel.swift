@@ -108,6 +108,11 @@ class RestaurantsViewModel {
     private func runRequest() {
         requestHandle?.dispose()
 
+        // @Todo: probably shouldn't get restaurant service as a dependency
+        // but instead, an observable
+        // we subscribe to it when we start working
+        // and we dispose of the subscription on deinit
+        
         requestHandle = restaurantsService
             .fetchRestaurants()
             .map { $0.map(RestaurantViewModel.init) }

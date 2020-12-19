@@ -16,23 +16,21 @@ class FileService { }
 extension FileService: IFileService {
     func fetchJSON(fileName: String) -> Observable<Data> {
         Observable.create { observer -> Disposable in
-            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(Int.random(in: 100...2000))) {
-                guard let path = Bundle.main.path(forResource: fileName, ofType: "json")
-                else {
-                    observer.onError(JSONError.fileNotFound)
-                    return
-                }
-                do {
-                    let data = try Data(
-                        contentsOf: URL(fileURLWithPath: path),
-                        options: .mappedIfSafe
-                    )
-                    observer.onNext(data)
-                } catch {
-                    observer.onError(error)
-                }
-                observer.onCompleted()
+            guard let path = Bundle.main.path(forResource: fileName, ofType: "json")
+            else {
+                observer.onError(JSONError.fileNotFound)
+                return Disposables.create()
             }
+            do {
+                let data = try Data(
+                    contentsOf: URL(fileURLWithPath: path),
+                    options: .mappedIfSafe
+                )
+                observer.onNext(data)
+            } catch {
+                observer.onError(error)
+            }
+            observer.onCompleted()
             return Disposables.create()
         }
     }

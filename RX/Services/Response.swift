@@ -7,19 +7,47 @@
 
 import RxSwift
 
-// MARK: - Observable Response Handling
+// MARK: - Instability Simulation
 extension ObservableType {
 
-    func randomlySwitchCodeToError<T: Decodable>() -> Observable<Response<T>>
+    func delayIfNeeded(_ shouldDelay: Bool) -> Observable<Element> {
+        flatMap { value -> Observable<Element> in
+            var output = Observable.just(value)
+            if shouldDelay {
+                let delayTime: RxTimeInterval = .milliseconds(Int.random(in: 20...2000))
+                output = output.delay(delayTime, scheduler: MainScheduler.instance)
+            }
+            return output
+        }
+    }
+
+    func randomlySwitchCodeToError<T: Decodable>(_ shouldSwitchCode: Bool) -> Observable<Response<T>>
     where Element == Response<T>
     {
         map { response in
-            if response.code == 200, Int.random(in: 0...10) > 6 {
+            if shouldSwitchCode, response.code == 200, Int.random(in: 0...10) > 6 {
                 return Response(code: 400, result: response.result)
             }
             return response
         }
     }
+
+    func skipRandomElements<T: Decodable>(_ shouldSkip: Bool) -> Observable<Response<[T]>>
+    where Element == Response<[T]>
+    {
+        map { response -> Response<[T]> in
+            Response(
+                code: response.code,
+                result: response.result?.filter { _ in
+                    !(shouldSkip && Int.random(in: 0...10) < 1)
+                }
+            )
+        }
+    }
+}
+
+// MARK: - Observable Response Handling
+extension ObservableType {
 
     func parseJSONIntoResponse<T: Decodable>() -> Observable<Response<T>>
     where Element == Data
@@ -39,19 +67,6 @@ extension ObservableType {
             guard let result = response.result
             else { throw ResponseError.unexpectedEmptyResult }
             return result
-        }
-    }
-
-    func skipRandomElements<T: Decodable>() -> Observable<Response<[T]>>
-    where Element == Response<[T]>
-    {
-        map { response -> Response<[T]> in
-            Response(
-                code: response.code,
-                result: response.result?.filter { _ in
-                    Int.random(in: 0...10) > 1
-                }
-            )
         }
     }
 }

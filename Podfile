@@ -5,6 +5,7 @@ target 'RX' do
   use_frameworks!
 
   pod 'RxSwift'
+  pod 'RxTest'
   pod 'RxCocoa'
   pod 'SnapKit'
 
