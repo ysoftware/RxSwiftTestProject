@@ -52,7 +52,6 @@ class RestaurantsViewController: UIViewController {
             .disposed(by: disposeBag)
 
         viewModel.selectedFiltersObserver
-            .observeOn(MainScheduler.instance)
             .bind { [weak self] filters in
                 guard let self = self else { return }
                 self.tagsDisposeBag = DisposeBag()

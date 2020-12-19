@@ -20,18 +20,18 @@ class RestaurantsViewModel {
 
     private let messageLabelRelay = BehaviorRelay(value: "")
     var messageLabel: Observable<String> {
-        messageLabelRelay.asObservable()
+        messageLabelRelay.asDriver().asObservable()
     }
     
     private let allRestaurantsRelay = BehaviorRelay<[RestaurantViewModel]>(value: [])
     private let filteredRestaurantsRelay = BehaviorRelay<[RestaurantViewModel]>(value: [])
     var restaurants: Observable<[RestaurantViewModel]> {
-        filteredRestaurantsRelay.asObservable()
+        filteredRestaurantsRelay.asDriver().asObservable()
     }
 
     private let refreshRelay = BehaviorRelay<Bool>(value: false)
     var isRefreshing: Observable<Bool> {
-        refreshRelay.asObservable()
+        refreshRelay.asDriver().asObservable()
     }
 
     // MARK: - Input
@@ -113,8 +113,6 @@ class RestaurantsViewModel {
         requestHandle = restaurantsService
             .fetchRestaurants()
             .map { $0.map(RestaurantViewModel.init) }
-            .observeOn(MainScheduler.instance)
-            .share(replay: 2)
             .map { value in
                 self.refreshRelay.accept(false)
                 return value
