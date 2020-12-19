@@ -71,10 +71,7 @@ class RestaurantsViewModel {
         // MARK: Input
 
         Observable
-            .combineLatest(
-                allRestaurantsRelay.catchErrorJustReturn([]),
-                selectedFiltersObserver
-            )
+            .combineLatest(allRestaurantsRelay, selectedFiltersObserver)
             .map { restaurants, selectedFilters in
                 restaurants.filter {
                     selectedFilters.contains($0.restaurant.cuisine) || selectedFilters.isEmpty
@@ -85,8 +82,7 @@ class RestaurantsViewModel {
 
         refreshObserver
             .bind { [weak self] in
-                guard let self = self else { return }
-                self.runRequest()
+                self?.runRequest()
             }
             .disposed(by: disposeBag)
 
