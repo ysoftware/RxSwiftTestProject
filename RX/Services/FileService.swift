@@ -31,6 +31,7 @@ extension FileService: IFileService {
                 } catch {
                     observer.onError(error)
                 }
+                observer.onCompleted()
             }
             return Disposables.create()
         }

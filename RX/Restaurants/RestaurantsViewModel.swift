@@ -11,7 +11,7 @@ import RxCocoa
 class RestaurantsViewModel {
 
     // MARK: - Output
-    let title: Observable<String> = BehaviorRelay(value: "Restaurants").asObservable()
+    let title = BehaviorRelay(value: "Restaurants").asObservable()
 
     private let tagsRelay = BehaviorRelay(value: Cuisine.allCases)
     var tags: [Cuisine] {
@@ -40,13 +40,20 @@ class RestaurantsViewModel {
     var refreshObserver = PublishRelay<Void>()
     var filterTapObserver = PublishRelay<UITapGestureRecognizer>()
 
+    // MARK: - Internal
+    private let disposeBag = DisposeBag()
+    private var requestHandle: Disposable?
+    private var requestRelay = PublishRelay<[RestaurantViewModel]>()
+
     func initiate() {
-        runRequest()
 
         // MARK: Output
 
         requestRelay
-            .catchErrorJustReturn([])
+            .map { [weak self] value in
+                self?.refreshRelay.accept(false)
+                return value
+            }
             .bind(to: allRestaurantsRelay)
             .disposed(by: disposeBag)
 
@@ -57,9 +64,6 @@ class RestaurantsViewModel {
                 } else {
                     return ""
                 }
-            }
-            .catchError { error in
-                .just("An error occured:\n\(error.localizedDescription)")
             }
             .bind(to: messageLabelRelay)
             .disposed(by: disposeBag)
@@ -99,13 +103,11 @@ class RestaurantsViewModel {
                 self.selectedFiltersObserver.accept(newValue)
             }
             .disposed(by: disposeBag)
+
+        runRequest()
     }
 
     // MARK: - Private
-
-    private let disposeBag = DisposeBag()
-    private var requestHandle: Disposable?
-    private var requestRelay = PublishSubject<[RestaurantViewModel]>()
 
     private func runRequest() {
         requestHandle?.dispose()
@@ -113,11 +115,12 @@ class RestaurantsViewModel {
         requestHandle = restaurantsService
             .fetchRestaurants()
             .map { $0.map(RestaurantViewModel.init) }
-            .map { value in
-                self.refreshRelay.accept(false)
-                return value
-            }
-            .bind(to: requestRelay)
+            .subscribe(onNext: { [weak self] value in
+                self?.requestRelay.accept(value)
+            }, onError: { [weak self] error in
+                self?.requestRelay.accept([])
+                self?.messageLabelRelay.accept("An error occured:\n\(error.localizedDescription)")
+            })
     }
 
     // MARK: - Initialization

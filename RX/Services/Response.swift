@@ -8,7 +8,18 @@
 import RxSwift
 
 // MARK: - Observable Response Handling
-extension Observable {
+extension ObservableType {
+
+    func randomlySwitchCodeToError<T: Decodable>() -> Observable<Response<T>>
+    where Element == Response<T>
+    {
+        map { response in
+            if response.code == 200, Int.random(in: 0...10) > 6 {
+                return Response(code: 400, result: response.result)
+            }
+            return response
+        }
+    }
 
     func parseJSONIntoResponse<T: Decodable>() -> Observable<Response<T>>
     where Element == Data
@@ -46,7 +57,6 @@ extension Observable {
 }
 
 // MARK: - Response Model
-
 struct Response<Data: Decodable>: Decodable {
     let code: Int
     let result: Data?

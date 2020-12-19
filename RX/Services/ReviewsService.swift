@@ -22,11 +22,11 @@ class ReviewsService {
 }
 
 extension ReviewsService: IReviewsService {
-
     func fetchReviews(for restaurant: Restaurant) -> Observable<[Review]> {
         fileService
             .fetchJSON(fileName: "Reviews")
             .parseJSONIntoResponse()
+            .randomlySwitchCodeToError()
             .handleResponse()
     }
 }

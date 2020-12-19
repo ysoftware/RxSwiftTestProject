@@ -27,6 +27,7 @@ extension RestaurantsService: IRestaurantsService {
             .fetchJSON(fileName: "Restaurants")
             .parseJSONIntoResponse()
             .skipRandomElements()
+            .randomlySwitchCodeToError()
             .handleResponse()
     }
 }

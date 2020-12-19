@@ -25,6 +25,7 @@
 		1FA30AD82583B8D80057C6B6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1FA30AD62583B8D80057C6B6 /* LaunchScreen.storyboard */; };
 		1FA30AE9258499660057C6B6 /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA30AE8258499660057C6B6 /* AppCoordinator.swift */; };
 		1FD01C9D258B215400CE758E /* RestaurantCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD01C9C258B215400CE758E /* RestaurantCell.swift */; };
+		1FF3AE76258DDD4400E4BDA8 /* Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF3AE75258DDD4400E4BDA8 /* Debug.swift */; };
 		52A358C375B85B3DCE4AA48E /* Pods_RX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D29566532F3CF1C9E975FC36 /* Pods_RX.framework */; };
 /* End PBXBuildFile section */
 
@@ -49,6 +50,7 @@
 		1FA30AD92583B8D80057C6B6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1FA30AE8258499660057C6B6 /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		1FD01C9C258B215400CE758E /* RestaurantCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantCell.swift; sourceTree = "<group>"; };
+		1FF3AE75258DDD4400E4BDA8 /* Debug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debug.swift; sourceTree = "<group>"; };
 		D29566532F3CF1C9E975FC36 /* Pods_RX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DFC8F5545AA64E8966C96043 /* Pods-RX.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RX.debug.xcconfig"; path = "Target Support Files/Pods-RX/Pods-RX.debug.xcconfig"; sourceTree = "<group>"; };
 		FB0788A972CA004323174C25 /* Pods-RX.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RX.release.xcconfig"; path = "Target Support Files/Pods-RX/Pods-RX.release.xcconfig"; sourceTree = "<group>"; };
@@ -73,6 +75,7 @@
 				1F6F3F902584A7730087C231 /* RestaurantsService.swift */,
 				1F6F3F932584A8380087C231 /* FileService.swift */,
 				1F6F3F8A2584A6ED0087C231 /* Response.swift */,
+				1FF3AE75258DDD4400E4BDA8 /* Debug.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -283,6 +286,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1F6F3F812584A6300087C231 /* RestaurantModel.swift in Sources */,
+				1FF3AE76258DDD4400E4BDA8 /* Debug.swift in Sources */,
 				1F10467F258A3FE300D5CBAC /* ReviewsService.swift in Sources */,
 				1F104688258A7E7000D5CBAC /* ReviewsViewModel.swift in Sources */,
 				1FA30AE9258499660057C6B6 /* AppCoordinator.swift in Sources */,
