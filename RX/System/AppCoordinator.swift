@@ -17,7 +17,7 @@ class AppCoordinator {
 
     func start() {
         let fileService = FileService()
-        let restaurantService = RestaurantsService(fileService: fileService)
+        let restaurantService = LocalRestaurantsService(fileService: fileService)
 
         let restaurantsViewController = RestaurantsViewController()
         restaurantsViewController.viewModel = RestaurantsViewModel(restaurantsService: restaurantService)

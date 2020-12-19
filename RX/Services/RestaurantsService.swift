@@ -12,7 +12,7 @@ protocol IRestaurantsService {
     func fetchRestaurants() -> Observable<[Restaurant]>
 }
 
-class RestaurantsService {
+class LocalRestaurantsService {
     init(fileService: IFileService) {
         self.fileService = fileService
     }
@@ -21,7 +21,7 @@ class RestaurantsService {
     let fileService: IFileService
 }
 
-extension RestaurantsService: IRestaurantsService {
+extension LocalRestaurantsService: IRestaurantsService {
     func fetchRestaurants() -> Observable<[Restaurant]> {
         fileService
             .fetchJSON(fileName: "Restaurants")

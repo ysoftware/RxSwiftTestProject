@@ -2,12 +2,11 @@
 # platform :ios, '9.0'
 
 target 'RX' do
-  # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
 
-  # Pods for RX
   pod 'RxSwift'
   pod 'RxCocoa'
   pod 'SnapKit'
 
+  target :'RXTests'
 end
