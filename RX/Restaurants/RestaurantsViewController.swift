@@ -103,8 +103,6 @@ class RestaurantsViewController: UIViewController {
             $0.edges.equalToSuperview()
         }
 
-        // MARK: ScrollView
-
         let content = UIView()
         content.translatesAutoresizingMaskIntoConstraints = false
         scrollView.addSubview(content)
