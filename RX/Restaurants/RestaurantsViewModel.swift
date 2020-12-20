@@ -38,7 +38,7 @@ class RestaurantsViewModel {
     var itemSelectedObserver = PublishRelay<Int>()
     var selectedFiltersObserver = BehaviorRelay<Set<Cuisine>>(value: [])
     var refreshObserver = PublishRelay<Void>()
-    var filterTapObserver = PublishRelay<UITapGestureRecognizer>()
+    var filterTapObserver = PublishRelay<Int>()
 
     // MARK: - Internal
     private let disposeBag = DisposeBag()
@@ -87,9 +87,9 @@ class RestaurantsViewModel {
             .disposed(by: disposeBag)
 
         filterTapObserver
-            .bind { [weak self] gestureRecognizer in
+            .bind { [weak self] elementIndex in
                 guard let self = self else { return }
-                let tag = self.tagsRelay.value[gestureRecognizer.view!.tag]
+                let tag = self.tagsRelay.value[elementIndex]
                 var newValue = self.selectedFiltersObserver.value
                 if newValue.contains(tag) {
                     newValue.remove(tag)

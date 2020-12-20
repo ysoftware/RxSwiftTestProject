@@ -150,6 +150,7 @@ class RestaurantsViewController: UIViewController {
         view.isUserInteractionEnabled = true
 
         tap.rx.event
+            .map { $0.view!.tag }
             .bind(to: viewModel.filterTapObserver)
             .disposed(by: tagsDisposeBag)
 
