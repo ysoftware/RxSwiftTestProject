@@ -25,24 +25,17 @@ class RestaurantsViewModelTests: XCTestCase {
         scheduler = TestScheduler(initialClock: 0)
     }
 
-    func test() {
-
-        // when
+    func testRestaurants() {
         viewModel.initiate()
-        let messageResult = scheduler.start { self.viewModel.messageLabel }
+
         let restaurantsResult = scheduler.start {
             self.viewModel.restaurants.map { viewModels in
                 viewModels.map(\.restaurant.name)
             }
         }
 
-        // then
-        let messageEvents = Recorded.events([
-            .next(200, "") // 200 is .created
-        ])
-
         let restaurantsEvents = Recorded.events([
-            .next(1000, [ // @Todo: why 1000? (.disposed)
+            .next(200, [
                 "Чентуриппе",
                 "The Park",
                 "Pinsapositana",
@@ -57,8 +50,19 @@ class RestaurantsViewModelTests: XCTestCase {
                 "Burger Heroes",
             ])
         ])
-
-        XCTAssertEqual(messageResult.events, messageEvents)
         XCTAssertEqual(restaurantsResult.events, restaurantsEvents)
+    }
+
+    func testMessages() {
+        viewModel.initiate()
+
+        let messageResult = scheduler.start {
+            self.viewModel.messageLabel
+        }
+
+        let messageEvents = Recorded.events([
+            .next(200, "")
+        ])
+        XCTAssertEqual(messageResult.events, messageEvents)
     }
 }
