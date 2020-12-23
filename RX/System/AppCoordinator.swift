@@ -10,18 +10,14 @@ import UIKit
 class AppCoordinator {
 
     private let window: UIWindow
+    private let screenFactory = ScreenFactory()
 
     init(window: UIWindow) {
         self.window = window
     }
 
     func start() {
-        let fileService = FileService()
-        let restaurantService = LocalRestaurantsService(fileService: fileService)
-
-        let restaurantsViewController = RestaurantsViewController()
-        restaurantsViewController.viewModel = RestaurantsViewModel(restaurantsService: restaurantService)
-
+        let restaurantsViewController = screenFactory.createRestaurantsScreen()
         window.rootViewController = UINavigationController(rootViewController: restaurantsViewController)
         window.makeKeyAndVisible()
     }

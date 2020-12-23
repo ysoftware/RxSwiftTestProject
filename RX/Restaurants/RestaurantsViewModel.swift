@@ -30,7 +30,6 @@ class RestaurantsViewModel {
     }
 
     // MARK: - Input
-    var itemSelectedObserver = PublishRelay<Int>()
     var selectedFiltersObserver = BehaviorRelay<Set<Cuisine>>(value: [])
     var refreshObserver = PublishRelay<Void>()
     var filterTapObserver = PublishRelay<Int>()

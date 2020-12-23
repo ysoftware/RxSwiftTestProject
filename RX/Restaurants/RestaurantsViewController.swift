@@ -10,9 +10,10 @@ import RxSwift
 import RxCocoa
 import SnapKit
 
-class RestaurantsViewController: UIViewController {
+class RestaurantsViewController: UIViewController, ImplementsNavigation {
 
     var viewModel: RestaurantsViewModel!
+    var screenFactory: ScreenFactory!
 
     private let disposeBag = DisposeBag()
     private var tagsDisposeBag = DisposeBag()
@@ -73,7 +74,15 @@ class RestaurantsViewController: UIViewController {
 
         tableView.rx.itemSelected
             .map { $0.row }
-            .bind(to: viewModel.itemSelectedObserver)
+            .bind(onNext: { [weak self] row in
+                guard let self = self else { return }
+                self.viewModel.restaurants.bind(onNext: { [weak self] restaurants in
+                    guard let self = self else { return }
+                    let restaurant = restaurants[row].restaurant
+                    let viewController = self.screenFactory.createReviewsScreen(restaurant: restaurant)
+                    self.navigationController?.pushViewController(viewController, animated: true)
+                }).dispose()
+            })
             .disposed(by: disposeBag)
 
         tableView.refreshControl?.rx

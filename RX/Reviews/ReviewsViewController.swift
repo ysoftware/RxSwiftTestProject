@@ -13,5 +13,6 @@ class ReviewsViewController: UIViewController {
 
     override func viewDidLoad() {
         title = viewModel.title
+        view.backgroundColor = .white
     }
 }

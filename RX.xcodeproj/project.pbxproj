@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1F0026AA2593B3870099ED73 /* ScreenFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F0026A92593B3870099ED73 /* ScreenFactory.swift */; };
 		1F10467C258A3E9A00D5CBAC /* Reviews.json in Resources */ = {isa = PBXBuildFile; fileRef = 1F10467B258A3E9A00D5CBAC /* Reviews.json */; };
 		1F10467F258A3FE300D5CBAC /* ReviewsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F10467E258A3FE300D5CBAC /* ReviewsService.swift */; };
 		1F104684258A401400D5CBAC /* ReviewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F104683258A401400D5CBAC /* ReviewModel.swift */; };
@@ -42,6 +43,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1F0026A92593B3870099ED73 /* ScreenFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenFactory.swift; sourceTree = "<group>"; };
 		1F10467B258A3E9A00D5CBAC /* Reviews.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Reviews.json; sourceTree = "<group>"; };
 		1F10467E258A3FE300D5CBAC /* ReviewsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewsService.swift; sourceTree = "<group>"; };
 		1F104683258A401400D5CBAC /* ReviewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewModel.swift; sourceTree = "<group>"; };
@@ -119,6 +121,7 @@
 		1F6F3F7F2584A6170087C231 /* System */ = {
 			isa = PBXGroup;
 			children = (
+				1F0026A92593B3870099ED73 /* ScreenFactory.swift */,
 				1FA30AE8258499660057C6B6 /* AppCoordinator.swift */,
 				1FA30AD42583B8D80057C6B6 /* Assets.xcassets */,
 				1FA30AD62583B8D80057C6B6 /* LaunchScreen.storyboard */,
@@ -404,6 +407,7 @@
 				1FA30AD02583B8D60057C6B6 /* RestaurantsViewController.swift in Sources */,
 				1FA30ACC2583B8D60057C6B6 /* AppDelegate.swift in Sources */,
 				1FD01C9D258B215400CE758E /* RestaurantCell.swift in Sources */,
+				1F0026AA2593B3870099ED73 /* ScreenFactory.swift in Sources */,
 				1F6F3F8B2584A6ED0087C231 /* Response.swift in Sources */,
 				1FA30ACE2583B8D60057C6B6 /* SceneDelegate.swift in Sources */,
 				1F10468B258A7ED200D5CBAC /* ReviewsViewController.swift in Sources */,
