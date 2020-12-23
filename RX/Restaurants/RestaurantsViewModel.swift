@@ -13,23 +13,18 @@ class RestaurantsViewModel {
     // MARK: - Output
     let title = BehaviorRelay(value: "Restaurants").asObservable()
 
-    private let tagsRelay = BehaviorRelay(value: Cuisine.allCases)
     var tags: [Cuisine] {
         tagsRelay.value
     }
 
-    private let messageLabelRelay = BehaviorRelay(value: "")
     var messageLabel: Observable<String> {
         messageLabelRelay.asDriver().asObservable()
     }
-    
-    private let allRestaurantsRelay = BehaviorRelay<[RestaurantViewModel]>(value: [])
-    private let filteredRestaurantsRelay = BehaviorRelay<[RestaurantViewModel]>(value: [])
+
     var restaurants: Observable<[RestaurantViewModel]> {
         filteredRestaurantsRelay.asDriver().asObservable()
     }
 
-    private let refreshRelay = BehaviorRelay<Bool>(value: false)
     var isRefreshing: Observable<Bool> {
         refreshRelay.asDriver().asObservable()
     }
@@ -44,16 +39,20 @@ class RestaurantsViewModel {
     private let disposeBag = DisposeBag()
     private var requestHandle: Disposable?
     private var requestRelay = PublishRelay<[RestaurantViewModel]>()
+    private let refreshRelay = BehaviorRelay<Bool>(value: false)
+    private let tagsRelay = BehaviorRelay(value: Cuisine.allCases)
+    private let allRestaurantsRelay = BehaviorRelay<[RestaurantViewModel]>(value: [])
+    private let filteredRestaurantsRelay = BehaviorRelay<[RestaurantViewModel]>(value: [])
+    private let messageLabelRelay = BehaviorRelay(value: "")
 
     func initiate() {
 
         // MARK: Output
 
         requestRelay
-            .map { [weak self] value in
+            .do(onNext: { [weak self] _ in
                 self?.refreshRelay.accept(false)
-                return value
-            }
+            })
             .bind(to: allRestaurantsRelay)
             .disposed(by: disposeBag)
 
