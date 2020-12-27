@@ -76,26 +76,25 @@ class RestaurantsViewController: UIViewController, ImplementsNavigation {
 
         // MARK: Output
 
-        tableView.rx.itemSelected
-            .do { [weak self] in
-                self?.tableView.deselectRow(at: $0, animated: true)
-            }
-            .map { $0.row }
-            .bind(to: viewModel.toggleFavourite)
+        tableView.rx
+            .setDelegate(self)
             .disposed(by: disposeBag)
 
-//        tableView.rx.itemSelected
-//            .map { $0.row }
-//            .bind(onNext: { [weak self] row in
-//                guard let self = self else { return }
-//                self.viewModel.restaurants.bind(onNext: { [weak self] restaurants in
-//                    guard let self = self else { return }
-//                    let restaurant = restaurants[row].restaurant
-//                    let viewController = self.screenFactory.createReviewsScreen(restaurant: restaurant)
-//                    self.navigationController?.pushViewController(viewController, animated: true)
-//                }).dispose()
-//            })
-//            .disposed(by: disposeBag)
+        tableView.rx.itemSelected
+            .do { [weak self] indexPath in
+                self?.tableView.deselectRow(at: indexPath, animated: true)
+            }
+            .map { $0.row }
+            .bind(onNext: { [weak self] row in
+                guard let self = self else { return }
+                self.viewModel.restaurants.bind(onNext: { [weak self] restaurants in
+                    guard let self = self else { return }
+                    let restaurant = restaurants[row].restaurant
+                    let viewController = self.screenFactory.createReviewsScreen(restaurant: restaurant)
+                    self.navigationController?.pushViewController(viewController, animated: true)
+                }).dispose()
+            })
+            .disposed(by: disposeBag)
 
         tableView.refreshControl?.rx
             .controlEvent(.valueChanged)
@@ -214,4 +213,18 @@ class RestaurantsViewController: UIViewController, ImplementsNavigation {
         stack.isLayoutMarginsRelativeArrangement = true
         return stack
     }()
+}
+
+extension RestaurantsViewController: UITableViewDelegate {
+    func tableView(
+        _ tableView: UITableView,
+        trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
+    ) -> UISwipeActionsConfiguration? {
+        UISwipeActionsConfiguration(actions: [
+            UIContextualAction(style: .normal, title: "Favourite", handler: { [weak self] _, _, completion in
+                self?.viewModel.toggleFavourite.accept(indexPath.row)
+                completion(true)
+            })
+        ])
+    }
 }
