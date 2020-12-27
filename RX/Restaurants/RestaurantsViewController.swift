@@ -45,6 +45,10 @@ class RestaurantsViewController: UIViewController, ImplementsNavigation {
                 guard let cell = cell as? RestaurantCell else { return }
                 cell.nameLabel.text = viewModel.restaurant.name
                 cell.subtitleLabel.text = viewModel.restaurant.cuisine.rawValue.capitalized
+
+                viewModel.isFavourite.bind { isFavourite in
+                    cell.favouriteStar.isHidden = !isFavourite
+                }.disposed(by: self.disposeBag)
             }
             .disposed(by: disposeBag)
 
@@ -73,17 +77,25 @@ class RestaurantsViewController: UIViewController, ImplementsNavigation {
         // MARK: Output
 
         tableView.rx.itemSelected
+            .do { [weak self] in
+                self?.tableView.deselectRow(at: $0, animated: true)
+            }
             .map { $0.row }
-            .bind(onNext: { [weak self] row in
-                guard let self = self else { return }
-                self.viewModel.restaurants.bind(onNext: { [weak self] restaurants in
-                    guard let self = self else { return }
-                    let restaurant = restaurants[row].restaurant
-                    let viewController = self.screenFactory.createReviewsScreen(restaurant: restaurant)
-                    self.navigationController?.pushViewController(viewController, animated: true)
-                }).dispose()
-            })
+            .bind(to: viewModel.toggleFavourite)
             .disposed(by: disposeBag)
+
+//        tableView.rx.itemSelected
+//            .map { $0.row }
+//            .bind(onNext: { [weak self] row in
+//                guard let self = self else { return }
+//                self.viewModel.restaurants.bind(onNext: { [weak self] restaurants in
+//                    guard let self = self else { return }
+//                    let restaurant = restaurants[row].restaurant
+//                    let viewController = self.screenFactory.createReviewsScreen(restaurant: restaurant)
+//                    self.navigationController?.pushViewController(viewController, animated: true)
+//                }).dispose()
+//            })
+//            .disposed(by: disposeBag)
 
         tableView.refreshControl?.rx
             .controlEvent(.valueChanged)

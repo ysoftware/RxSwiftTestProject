@@ -24,6 +24,7 @@ class RestaurantCell: UITableViewCell {
     private func setup() {
         addSubview(nameLabel)
         addSubview(subtitleLabel)
+        addSubview(favouriteStar)
 
         nameLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(10)
@@ -36,6 +37,12 @@ class RestaurantCell: UITableViewCell {
             $0.bottom.equalToSuperview().offset(-10)
             $0.leading.equalTo(snp.leadingMargin)
             $0.trailing.equalTo(snp.trailingMargin)
+        }
+
+        favouriteStar.snp.makeConstraints {
+            $0.trailing.equalToSuperview().offset(-10)
+            $0.centerY.equalToSuperview()
+            $0.width.height.equalTo(15)
         }
     }
 
@@ -56,5 +63,12 @@ class RestaurantCell: UITableViewCell {
         label.textColor = .darkGray
         label.font = .systemFont(ofSize: 15, weight: .semibold)
         return label
+    }()
+
+    lazy var favouriteStar: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .red
+        return view
     }()
 }

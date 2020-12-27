@@ -25,7 +25,7 @@ extension ObservableType {
     where Element == Response<T>
     {
         map { response in
-            if shouldSwitchCode, response.code == 200, Int.random(in: 0...10) > 6 {
+            if shouldSwitchCode, response.code == 200, Int.random(in: 0...10) > 9 {
                 return Response(code: 400, result: response.result)
             }
             return response
