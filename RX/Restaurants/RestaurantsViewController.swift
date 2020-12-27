@@ -100,8 +100,6 @@ class RestaurantsViewController: UIViewController, ImplementsNavigation {
             .controlEvent(.valueChanged)
             .bind(to: viewModel.refreshObserver)
             .disposed(by: disposeBag)
-
-        viewModel.initiate()
     }
 
     // MARK: - Setup

@@ -12,23 +12,21 @@ struct RestaurantViewModel {
 
     private var isFavouriteKey: String { "Restaurant-\(restaurant.name)-isFavourite" }
     private let disposeBag = DisposeBag()
-    private var isFavouriteRelay = BehaviorRelay<Bool>(value: false)
 
-    // MARK: Output
-
+    // MARK: - API
     let restaurant: Restaurant // @Todo: make private?
+    var isFavourite = BehaviorRelay<Bool>(value: false)
 
-    var isFavouriteInstantValue: Bool {
-        isFavouriteRelay.value
+    // MARK: - Setup
+
+    init(restaurant: Restaurant) {
+        self.restaurant = restaurant
+        setup()
     }
 
-    var isFavourite: Observable<Bool> {
-        isFavouriteRelay.asObservable()
-    }
+    // MARK: - Private
 
-    // MARK: Input
-
-    func setIsFavourite(_ value: Bool) {
+    private func setIsFavourite(_ value: Bool) {
         if value {
             UserDefaults.standard.setValue(true, forKey: isFavouriteKey)
         } else {
@@ -36,18 +34,15 @@ struct RestaurantViewModel {
         }
     }
 
-    // MARK: Setup
-
-    init(restaurant: Restaurant) {
-        self.restaurant = restaurant
-        setup()
-    }
-
     private func setup() {
         UserDefaults.standard.rx
             .observe(Bool.self, isFavouriteKey)
             .map { $0 ?? false }
-            .bind(to: isFavouriteRelay)
+            .bind(to: isFavourite)
+            .disposed(by: disposeBag)
+
+        isFavourite
+            .bind(onNext: setIsFavourite)
             .disposed(by: disposeBag)
     }
 }

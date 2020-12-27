@@ -14,6 +14,7 @@
 		1F104688258A7E7000D5CBAC /* ReviewsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F104687258A7E7000D5CBAC /* ReviewsViewModel.swift */; };
 		1F10468B258A7ED200D5CBAC /* ReviewsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F10468A258A7ED200D5CBAC /* ReviewsViewController.swift */; };
 		1F6DE7E6259861A500CFC008 /* RestaurantViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6DE7E5259861A500CFC008 /* RestaurantViewModel.swift */; };
+		1F6DE7EE2598FC4C00CFC008 /* Relay+Toggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6DE7ED2598FC4C00CFC008 /* Relay+Toggle.swift */; };
 		1F6F3F812584A6300087C231 /* RestaurantModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6F3F802584A6300087C231 /* RestaurantModel.swift */; };
 		1F6F3F872584A6890087C231 /* Restaurants.json in Resources */ = {isa = PBXBuildFile; fileRef = 1F6F3F862584A6890087C231 /* Restaurants.json */; };
 		1F6F3F8B2584A6ED0087C231 /* Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6F3F8A2584A6ED0087C231 /* Response.swift */; };
@@ -51,6 +52,7 @@
 		1F104687258A7E7000D5CBAC /* ReviewsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewsViewModel.swift; sourceTree = "<group>"; };
 		1F10468A258A7ED200D5CBAC /* ReviewsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewsViewController.swift; sourceTree = "<group>"; };
 		1F6DE7E5259861A500CFC008 /* RestaurantViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantViewModel.swift; sourceTree = "<group>"; };
+		1F6DE7ED2598FC4C00CFC008 /* Relay+Toggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Relay+Toggle.swift"; sourceTree = "<group>"; };
 		1F6F3F802584A6300087C231 /* RestaurantModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantModel.swift; sourceTree = "<group>"; };
 		1F6F3F862584A6890087C231 /* Restaurants.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Restaurants.json; sourceTree = "<group>"; };
 		1F6F3F8A2584A6ED0087C231 /* Response.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Response.swift; sourceTree = "<group>"; };
@@ -106,6 +108,7 @@
 				1F6F3F932584A8380087C231 /* FileService.swift */,
 				1F6F3F8A2584A6ED0087C231 /* Response.swift */,
 				1FF3AE75258DDD4400E4BDA8 /* Debug.swift */,
+				1F6DE7ED2598FC4C00CFC008 /* Relay+Toggle.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -417,6 +420,7 @@
 				1F6F3F912584A7730087C231 /* RestaurantsService.swift in Sources */,
 				1F104684258A401400D5CBAC /* ReviewModel.swift in Sources */,
 				1F6F3F992584AC270087C231 /* RestaurantListViewModel.swift in Sources */,
+				1F6DE7EE2598FC4C00CFC008 /* Relay+Toggle.swift in Sources */,
 				1F6F3F942584A8380087C231 /* FileService.swift in Sources */,
 				1F6DE7E6259861A500CFC008 /* RestaurantViewModel.swift in Sources */,
 			);

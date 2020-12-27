@@ -45,7 +45,7 @@ class RestaurantListViewModel {
     private let filteredRestaurantsRelay = BehaviorRelay<[RestaurantViewModel]>(value: [])
     private let messageLabelRelay = BehaviorRelay(value: "")
 
-    func initiate() {
+    private func setup() {
 
         // MARK: Output
 
@@ -101,10 +101,10 @@ class RestaurantListViewModel {
 
         toggleRestaurantFavouriteAtIndex
             .bind { [weak self] index in
-                guard let self = self else { return }
-                guard index < self.filteredRestaurantsRelay.value.count else { return }
-                let viewModel = self.filteredRestaurantsRelay.value[index]
-                viewModel.setIsFavourite(!viewModel.isFavouriteInstantValue)
+                guard let self = self,
+                      index < self.filteredRestaurantsRelay.value.count
+                else { return }
+                self.filteredRestaurantsRelay.value[index].isFavourite.toggleValue()
             }
             .disposed(by: disposeBag)
 
@@ -138,5 +138,6 @@ class RestaurantListViewModel {
 
     init(restaurantsService: IRestaurantsService) {
         self.restaurantsService = restaurantsService
+        setup()
     }
 }
