@@ -218,11 +218,16 @@ extension RestaurantsViewController: UITableViewDelegate {
         _ tableView: UITableView,
         trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
     ) -> UISwipeActionsConfiguration? {
-        UISwipeActionsConfiguration(actions: [
-            UIContextualAction(style: .normal, title: "Favourite", handler: { [weak self] _, _, completion in
-                self?.viewModel.toggleRestaurantFavouriteAtIndex.accept(indexPath.row)
-                completion(true)
-            })
-        ])
+        let restaurantViewModel = viewModel.restaurantsInstantValue[indexPath.row]
+        let imageName = restaurantViewModel.isFavourite.value ? "star" : "star.fill"
+
+        let action = UIContextualAction(style: .normal, title: nil) { _, _, completion in
+            restaurantViewModel.isFavourite.toggleValue()
+            completion(true)
+        }
+
+        action.image = UIImage(systemName: imageName)
+        action.backgroundColor = view.tintColor
+        return UISwipeActionsConfiguration(actions: [action])
     }
 }

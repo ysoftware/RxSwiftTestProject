@@ -21,6 +21,10 @@ class RestaurantListViewModel {
         messageLabelRelay.asDriver().asObservable()
     }
 
+    var restaurantsInstantValue: [RestaurantViewModel] {
+        filteredRestaurantsRelay.value
+    }
+
     var restaurants: Observable<[RestaurantViewModel]> {
         filteredRestaurantsRelay.asDriver().asObservable()
     }
@@ -33,7 +37,6 @@ class RestaurantListViewModel {
     var selectedFiltersObserver = BehaviorRelay<Set<Cuisine>>(value: [])
     var refreshObserver = PublishRelay<Void>()
     var filterTapObserver = PublishRelay<Int>()
-    var toggleRestaurantFavouriteAtIndex = PublishRelay<Int>()
 
     // MARK: - Internal
     private let disposeBag = DisposeBag()
@@ -96,15 +99,6 @@ class RestaurantListViewModel {
                     newValue.insert(tag)
                 }
                 self.selectedFiltersObserver.accept(newValue)
-            }
-            .disposed(by: disposeBag)
-
-        toggleRestaurantFavouriteAtIndex
-            .bind { [weak self] index in
-                guard let self = self,
-                      index < self.filteredRestaurantsRelay.value.count
-                else { return }
-                self.filteredRestaurantsRelay.value[index].isFavourite.toggleValue()
             }
             .disposed(by: disposeBag)
 

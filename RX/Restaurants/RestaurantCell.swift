@@ -42,7 +42,7 @@ class RestaurantCell: UITableViewCell {
         favouriteStar.snp.makeConstraints {
             $0.trailing.equalToSuperview().offset(-10)
             $0.centerY.equalToSuperview()
-            $0.width.height.equalTo(15)
+            $0.width.height.equalTo(25)
         }
     }
 
@@ -66,9 +66,9 @@ class RestaurantCell: UITableViewCell {
     }()
 
     lazy var favouriteStar: UIView = {
-        let view = UIView()
+        let view = UIImageView()
+        view.image = UIImage(systemName: "star.fill")
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .red
         return view
     }()
 }
