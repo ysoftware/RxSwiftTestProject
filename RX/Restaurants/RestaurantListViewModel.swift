@@ -33,7 +33,7 @@ class RestaurantListViewModel {
     var selectedFiltersObserver = BehaviorRelay<Set<Cuisine>>(value: [])
     var refreshObserver = PublishRelay<Void>()
     var filterTapObserver = PublishRelay<Int>()
-    var toggleFavourite = PublishRelay<Int>() // index of the restaurant's viewModel
+    var toggleRestaurantFavouriteAtIndex = PublishRelay<Int>()
 
     // MARK: - Internal
     private let disposeBag = DisposeBag()
@@ -99,7 +99,7 @@ class RestaurantListViewModel {
             }
             .disposed(by: disposeBag)
 
-        toggleFavourite
+        toggleRestaurantFavouriteAtIndex
             .bind { [weak self] index in
                 guard let self = self else { return }
                 guard index < self.filteredRestaurantsRelay.value.count else { return }

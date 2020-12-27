@@ -222,7 +222,7 @@ extension RestaurantsViewController: UITableViewDelegate {
     ) -> UISwipeActionsConfiguration? {
         UISwipeActionsConfiguration(actions: [
             UIContextualAction(style: .normal, title: "Favourite", handler: { [weak self] _, _, completion in
-                self?.viewModel.toggleFavourite.accept(indexPath.row)
+                self?.viewModel.toggleRestaurantFavouriteAtIndex.accept(indexPath.row)
                 completion(true)
             })
         ])
