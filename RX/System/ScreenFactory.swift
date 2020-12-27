@@ -24,7 +24,7 @@ class ScreenFactory {
 
     func createRestaurantsScreen() -> UIViewController {
         let restaurantsViewController = RestaurantsViewController()
-        restaurantsViewController.viewModel = RestaurantsViewModel(restaurantsService: restaurantService)
+        restaurantsViewController.viewModel = RestaurantListViewModel(restaurantsService: restaurantService)
         return setup(restaurantsViewController)
     }
 

@@ -12,7 +12,7 @@ import SnapKit
 
 class RestaurantsViewController: UIViewController, ImplementsNavigation {
 
-    var viewModel: RestaurantsViewModel!
+    var viewModel: RestaurantListViewModel!
     var screenFactory: ScreenFactory!
 
     private let disposeBag = DisposeBag()

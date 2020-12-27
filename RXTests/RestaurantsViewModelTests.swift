@@ -12,7 +12,7 @@ import RxTest
 
 class RestaurantsViewModelTests: XCTestCase {
 
-    var viewModel: RestaurantsViewModel!
+    var viewModel: RestaurantListViewModel!
     var scheduler: TestScheduler!
 
     override func setUp() {
@@ -21,7 +21,7 @@ class RestaurantsViewModelTests: XCTestCase {
         restaurantService.delaysOutput = false
         restaurantService.shouldRandomlySkipElements = false
         restaurantService.shouldRandomlySwitchCodeToError = false
-        viewModel = RestaurantsViewModel(restaurantsService: restaurantService)
+        viewModel = RestaurantListViewModel(restaurantsService: restaurantService)
         scheduler = TestScheduler(initialClock: 0)
     }
 

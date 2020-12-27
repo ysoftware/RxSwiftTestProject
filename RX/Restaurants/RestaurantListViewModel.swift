@@ -1,5 +1,5 @@
 //
-//  RestaurantsViewModel.swift
+//  RestaurantListViewModel.swift
 //  RX
 //
 //  Created by Ерохин Ярослав Игоревич on 12.12.2020.
@@ -8,7 +8,7 @@
 import RxSwift
 import RxCocoa
 
-class RestaurantsViewModel {
+class RestaurantListViewModel {
 
     // MARK: - Output
     let title = BehaviorRelay(value: "Restaurants").asObservable()
