@@ -7,8 +7,15 @@
 
 import RxSwift
 import RxCocoa
+import RxDataSources
 
-struct RestaurantViewModel {
+struct RestaurantViewModel: IdentifiableType, Equatable {
+
+    static func == (lhs: RestaurantViewModel, rhs: RestaurantViewModel) -> Bool {
+        lhs.restaurant.name == rhs.restaurant.name
+    }
+
+    var identity: String { restaurant.name }
 
     private var isFavouriteKey: String { "Restaurant-\(restaurant.name)-isFavourite" }
     private let disposeBag = DisposeBag()

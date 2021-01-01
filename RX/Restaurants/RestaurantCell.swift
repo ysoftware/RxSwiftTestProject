@@ -7,6 +7,7 @@
 
 import UIKit
 import RxSwift
+import RxDataSources
 
 class RestaurantCell: UITableViewCell {
 
@@ -83,4 +84,20 @@ class RestaurantCell: UITableViewCell {
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
+}
+
+struct RestaurantSectionModel {
+    var header: Int = 0
+    var items: [RestaurantViewModel]
+}
+
+extension RestaurantSectionModel: AnimatableSectionModelType {
+    init(original: RestaurantSectionModel, items: [RestaurantViewModel]) {
+        self = original
+        self.items = items
+    }
+
+    var identity: Int {
+        return header
+    }
 }

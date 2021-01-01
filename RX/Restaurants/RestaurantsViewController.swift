@@ -9,6 +9,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 import SnapKit
+import RxDataSources
 
 class RestaurantsViewController: UIViewController, ImplementsNavigation {
 
@@ -17,15 +18,29 @@ class RestaurantsViewController: UIViewController, ImplementsNavigation {
 
     private let disposeBag = DisposeBag()
     private var tagsDisposeBag = DisposeBag()
+    private var dataSource: RxTableViewSectionedAnimatedDataSource<RestaurantSectionModel>!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
+        setupTableDataSource()
         applyViewModel()
     }
 
     override func viewWillLayoutSubviews() {
         tableView.contentInset.bottom = tagsStackView.frame.height
+    }
+
+    private func setupTableDataSource() {
+        dataSource = .init(configureCell: { dataSource, tableView, indexPath, viewModel -> UITableViewCell in
+            let cell = tableView.dequeueReusableCell(
+                withIdentifier: RestaurantCell.ID, for: indexPath
+            ) as! RestaurantCell
+            cell.nameLabel.text = viewModel.restaurant.name
+            cell.subtitleLabel.text = viewModel.restaurant.cuisine.rawValue.capitalized
+            cell.observeIsFavourite(viewModel.isFavourite.asObservable())
+            return cell
+        })
     }
 
     private func applyViewModel() {
@@ -41,12 +56,8 @@ class RestaurantsViewController: UIViewController, ImplementsNavigation {
             .disposed(by: disposeBag)
 
         viewModel.restaurants
-            .bind(to: tableView.rx.items(cellIdentifier: RestaurantCell.ID)) { _, viewModel, cell in
-                let cell = cell as! RestaurantCell
-                cell.nameLabel.text = viewModel.restaurant.name
-                cell.subtitleLabel.text = viewModel.restaurant.cuisine.rawValue.capitalized
-                cell.observeIsFavourite(viewModel.isFavourite.asObservable())
-            }
+            .map { [RestaurantSectionModel(items: $0)] }
+            .bind(to: tableView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
 
         viewModel.messageLabel

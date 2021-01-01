@@ -8,6 +8,8 @@ target 'RX' do
   pod 'RxTest'
   pod 'RxCocoa'
   pod 'SnapKit'
+  
+  pod 'RxDataSources', '~> 4.0'
 
   target :'RXTests'
 end
