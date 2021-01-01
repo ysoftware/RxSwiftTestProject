@@ -45,10 +45,7 @@ class RestaurantsViewController: UIViewController, ImplementsNavigation {
                 let cell = cell as! RestaurantCell
                 cell.nameLabel.text = viewModel.restaurant.name
                 cell.subtitleLabel.text = viewModel.restaurant.cuisine.rawValue.capitalized
-
-                viewModel.isFavourite.bind { isFavourite in
-                    cell.favouriteStar.isHidden = !isFavourite
-                }.disposed(by: self.disposeBag)
+                cell.observeIsFavourite(viewModel.isFavourite.asObservable())
             }
             .disposed(by: disposeBag)
 

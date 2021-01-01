@@ -6,14 +6,20 @@
 //
 
 import UIKit
+import RxSwift
 
 class RestaurantCell: UITableViewCell {
 
+    private var disposeBag = DisposeBag()
     static let ID = "Cell"
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setup()
+    }
+
+    override func prepareForReuse() {
+        disposeBag = DisposeBag()
     }
 
     required init?(coder: NSCoder) {
@@ -44,6 +50,12 @@ class RestaurantCell: UITableViewCell {
             $0.centerY.equalToSuperview()
             $0.width.height.equalTo(25)
         }
+    }
+
+    func observeIsFavourite(_ observer: Observable<Bool>) {
+        observer.bind { [weak self] isFavourite in
+            self?.favouriteStar.isHidden = !isFavourite
+        }.disposed(by: disposeBag)
     }
 
     // MARK: Subviews
