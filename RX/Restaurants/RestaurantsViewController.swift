@@ -32,15 +32,19 @@ class RestaurantsViewController: UIViewController, ImplementsNavigation {
     }
 
     private func setupTableDataSource() {
-        dataSource = .init(configureCell: { dataSource, tableView, indexPath, viewModel -> UITableViewCell in
-            let cell = tableView.dequeueReusableCell(
-                withIdentifier: RestaurantCell.ID, for: indexPath
-            ) as! RestaurantCell
-            cell.nameLabel.text = viewModel.restaurant.name
-            cell.subtitleLabel.text = viewModel.restaurant.cuisine.rawValue.capitalized
-            cell.observeIsFavourite(viewModel.isFavourite.asObservable())
-            return cell
-        })
+        dataSource = .init(
+            configureCell: { dataSource, tableView, indexPath, viewModel -> UITableViewCell in
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: RestaurantCell.ID, for: indexPath
+                ) as! RestaurantCell
+                cell.nameLabel.text = viewModel.restaurant.name
+                cell.subtitleLabel.text = viewModel.restaurant.cuisine.rawValue.capitalized
+                cell.observeIsFavourite(viewModel.isFavourite.asObservable())
+                return cell
+            }, canEditRowAtIndexPath: { _, _ in
+                return true
+            }
+        )
     }
 
     private func applyViewModel() {
