@@ -29,6 +29,8 @@ class RestaurantCell: UITableViewCell {
     }
 
     private func setup() {
+        nameLabel.setContentHuggingPriority(.required, for: .vertical)
+
         addSubview(nameLabel)
         addSubview(subtitleLabel)
         addSubview(favouriteStar)
@@ -36,18 +38,18 @@ class RestaurantCell: UITableViewCell {
         nameLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(10)
             $0.leading.equalTo(snp.leadingMargin)
-            $0.trailing.equalTo(snp.trailingMargin)
+            $0.trailing.equalTo(favouriteStar.snp.leading).offset(-10)
         }
 
         subtitleLabel.snp.makeConstraints {
             $0.top.equalTo(nameLabel.snp.bottom).offset(2)
             $0.bottom.equalToSuperview().offset(-10)
             $0.leading.equalTo(snp.leadingMargin)
-            $0.trailing.equalTo(snp.trailingMargin)
+            $0.trailing.equalTo(favouriteStar.snp.leading).offset(-10)
         }
 
         favouriteStar.snp.makeConstraints {
-            $0.trailing.equalToSuperview().offset(-10)
+            $0.trailing.equalTo(snp.trailingMargin)
             $0.centerY.equalToSuperview()
             $0.width.height.equalTo(25)
         }

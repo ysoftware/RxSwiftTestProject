@@ -117,6 +117,7 @@ class RestaurantsViewController: UIViewController, ImplementsNavigation {
     }
 
     private func setupViews() {
+        navigationController?.navigationBar.backgroundColor = .white
         navigationController?.navigationBar.prefersLargeTitles = true
         tableView.refreshControl = UIRefreshControl()
 
