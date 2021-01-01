@@ -45,6 +45,12 @@ class RestaurantsViewController: UIViewController, ImplementsNavigation {
                 return true
             }
         )
+
+        dataSource.animationConfiguration = AnimationConfiguration(
+            insertAnimation: .fade,
+            reloadAnimation: .fade,
+            deleteAnimation: .right
+        )
     }
 
     private func applyViewModel() {
