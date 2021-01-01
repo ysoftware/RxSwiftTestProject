@@ -6,17 +6,22 @@
 //
 
 import RxSwift
+import RxCocoa
 
 class ReviewsViewModel {
 
-    var title: String { restaurant.name }
+    var title: String { restaurantViewModel.restaurant.name }
+
+    var isFavourite: BehaviorRelay<Bool> {
+        restaurantViewModel.isFavourite
+    }
 
     // MARK: Dependencies
     private let reviewsService: IReviewsService
-    private let restaurant: Restaurant
+    private let restaurantViewModel: RestaurantViewModel
 
-    init(restaurant: Restaurant, reviewsService: IReviewsService) {
+    init(restaurantViewModel: RestaurantViewModel, reviewsService: IReviewsService) {
         self.reviewsService = reviewsService
-        self.restaurant = restaurant
+        self.restaurantViewModel = restaurantViewModel
     }
 }

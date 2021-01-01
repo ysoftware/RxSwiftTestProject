@@ -42,7 +42,7 @@ class RestaurantsViewController: UIViewController, ImplementsNavigation {
 
         viewModel.restaurants
             .bind(to: tableView.rx.items(cellIdentifier: RestaurantCell.ID)) { _, viewModel, cell in
-                guard let cell = cell as? RestaurantCell else { return }
+                let cell = cell as! RestaurantCell
                 cell.nameLabel.text = viewModel.restaurant.name
                 cell.subtitleLabel.text = viewModel.restaurant.cuisine.rawValue.capitalized
 
@@ -89,8 +89,10 @@ class RestaurantsViewController: UIViewController, ImplementsNavigation {
                 guard let self = self else { return }
                 self.viewModel.restaurants.bind(onNext: { [weak self] restaurants in
                     guard let self = self else { return }
-                    let restaurant = restaurants[row].restaurant
-                    let viewController = self.screenFactory.createReviewsScreen(restaurant: restaurant)
+                    let restaurantViewModel = restaurants[row]
+                    let viewController = self.screenFactory.createReviewsScreen(
+                        restaurantViewModel: restaurantViewModel
+                    )
                     self.navigationController?.pushViewController(viewController, animated: true)
                 }).dispose()
             })
@@ -101,8 +103,6 @@ class RestaurantsViewController: UIViewController, ImplementsNavigation {
             .bind(to: viewModel.refreshObserver)
             .disposed(by: disposeBag)
     }
-
-    // MARK: - Setup
 
     private func setupViews() {
         navigationController?.navigationBar.prefersLargeTitles = true

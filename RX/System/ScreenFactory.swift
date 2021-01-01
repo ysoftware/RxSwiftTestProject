@@ -28,10 +28,10 @@ class ScreenFactory {
         return setup(restaurantsViewController)
     }
 
-    func createReviewsScreen(restaurant: Restaurant) -> UIViewController {
+    func createReviewsScreen(restaurantViewModel: RestaurantViewModel) -> UIViewController {
         let reviewsViewController = ReviewsViewController()
         reviewsViewController.viewModel = ReviewsViewModel(
-            restaurant: restaurant,
+            restaurantViewModel: restaurantViewModel,
             reviewsService: reviewsService
         )
         return setup(reviewsViewController)
