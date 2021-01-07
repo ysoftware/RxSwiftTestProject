@@ -4,12 +4,12 @@
 target 'RX' do
   use_frameworks!
 
-  pod 'RxSwift'
-  pod 'RxTest'
-  pod 'RxCocoa'
   pod 'SnapKit'
-  
-  pod 'RxDataSources', '~> 4.0'
+  pod 'RxSwift', '~> 6.0'
+  pod 'RxCocoa', '~> 6.0'
+  pod 'RxDataSources', '~> 5.0'
 
-  target :'RXTests'
+target :'RXTests'
+  pod 'RxTest', '~> 6.0.0'
+
 end
